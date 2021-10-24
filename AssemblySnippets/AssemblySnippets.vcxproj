@@ -24,7 +24,7 @@
     <ProjectGuid>{69f31b22-408d-4917-b143-5c58ec183dc3}</ProjectGuid>
     <RootNamespace>AssemblySnippets</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>StringLoop</ProjectName>
+    <ProjectName>StringLooping</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
