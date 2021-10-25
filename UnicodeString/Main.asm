@@ -1,5 +1,15 @@
 ; http://masm32.com/board/index.php?topic=6259.0
 
+ifndef __UNICODE__
+__UNICODE__ equ 1
+endif
+
+ifdef __UNICODE__
+    TCHAR   typedef WORD
+else
+    TCHAR   typedef BYTE
+endif
+
 externdef ExitProcess:PROC
 
 .data
