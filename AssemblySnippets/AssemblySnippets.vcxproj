@@ -129,7 +129,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>main</EntryPointSymbol>
       <AdditionalDependencies>gdiplus.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <LargeAddressAware>true</LargeAddressAware>
+      <LargeAddressAware>false</LargeAddressAware>
     </Link>
     <MASM>
       <PreserveIdentifierCase>1</PreserveIdentifierCase>
