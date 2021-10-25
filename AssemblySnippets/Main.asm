@@ -1,6 +1,7 @@
 ; Programa de ejemplo en Windows :
 ; Programa que permite escribir una cadena en consola y verificar si tiene la letra "i", posteriormente mostrar en
 ; pantalla la respuesta si es así o no, mostrar la cadena y su longitud
+; https://stackoverflow.com/questions/8504097/declaring-variable-sized-arrays-in-assembly
 
 ifndef __UNICODE__
 __UNICODE__ equ 1
@@ -62,35 +63,34 @@ extern GetStdHandle : PROC
 
     charTest BYTE 'i'
 
-    ; Buffers
+    ; Char buffers
     charsRead DWORD 0
     charsWritten DWORD 0
-    BufferSize_init LABEL BYTE
+    
     buffer BYTE 1024 DUP(0)
-    BufferSize equ $-BufferSize_init
+    BufferSize equ $-buffer
 
     ; Text strings
-    msgMatchLength_init LABEL BYTE
-    msgMatch BYTE "Match found with character 'i'", 0
-    msgMatchLength equ $-msgMatchLength_init
-    
-    msgNoMatchLength_init LABEL BYTE
-    msgNoMatch BYTE "No match found with character 'i'", 0
-    msgNoMatchLength equ $-msgNoMatchLength_init
-    
-    msgErrorInputLength_init LABEL BYTE
-    msgErrorInput BYTE "Error retrieving the input handle device", 0
-    msgErrorInputLength equ $-msgErrorInputLength_init
+    msgInput    BYTE    "Please enter some text: ", 13, 10, 0
+    msgInputLength equ $-msgInput
 
-    msgErrorOutputLength_init LABEL BYTE
+    msgMatch BYTE "Match found with character 'i'", 0
+    msgMatchLength equ $-msgMatch
+    
+    msgNoMatch BYTE "No match found with character 'i'", 0
+    msgNoMatchLength equ $-msgNoMatch
+    
+    msgErrorInput BYTE "Error retrieving the input handle device", 0
+    msgErrorInputLength equ $-msgErrorInput
+
     msgErrorOutput BYTE "Error retrieving the output handle device", 0
-    msgErrorOutputLength equ $-msgErrorOutputLength_init
+    msgErrorOutputLength equ $-msgErrorOutput
 .code
 
 main PROC
     ; Stack preliminaries
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-	and rsp, -10h	; If neede, add 8 bits to align the stack to a 16-bit boundary
+	and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input device (STD_INPUT_HANDLE)
     mov rcx, -10
@@ -106,11 +106,18 @@ main PROC
     je ErrorHandleOutput
     mov hStdout, rax
 
+    ; Request the user to enter some text
+    mov rcx, hStdout
+    mov rdx, OFFSET msgInput
+    mov r8d, msgInputLength
+    mov r9, OFFSET charsWritten
+    call WriteConsoleA
+
     ; Read the user-input text
     mov rcx, hStdin
     mov rdx, OFFSET buffer      ; adds a null value at the end of the buffer
     mov r8d, BufferSize
-    mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10)
+    mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10) chars but not the null value at the end
     call ReadConsoleA
 
     ; Search any match with charTest
