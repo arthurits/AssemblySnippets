@@ -6,9 +6,16 @@ ifndef __UNICODE__
 __UNICODE__ equ 1
 endif
 
+ifdef __UNICODE__
+    TCHAR   typedef WORD
+else
+    TCHAR   typedef BYTE
+endif
 
-; EXIT_SUCESS
+; Constants and parameters
 EXIT_SUCCESS EQU <0>
+INVALID_HANDLE_VALUE equ -1;
+
 
 ; BOOL WINAPI ReadConsole(
     ;   _In_     HANDLE  hConsoleInput,
@@ -17,7 +24,14 @@ EXIT_SUCCESS EQU <0>
     ;   _Out_    LPDWORD lpNumberOfCharsRead,
     ;   _In_opt_ LPVOID  pInputControl
     ; );
-extern ReadConsoleA:PROC; Version ASCII
+;extern ReadConsoleA:PROC; Version ASCII
+externdef ReadConsoleA:PROC
+externdef ReadConsoleW:PROC
+  IFDEF __UNICODE__
+    ReadConsole equ ReadConsoleW
+  ELSE
+    ReadConsole equ ReadConsoleA
+  ENDIF
 
 ; BOOL WINAPI WriteConsole(
     ;   _In_             HANDLE  hConsoleOutput,
@@ -26,7 +40,14 @@ extern ReadConsoleA:PROC; Version ASCII
     ;   _Out_            LPDWORD lpNumberOfCharsWritten,
     ;   _Reserved_       LPVOID  lpReserved
     ; );
-extern WriteConsoleA:PROC; Version ASCII
+;extern WriteConsoleA:PROC; Version ASCII
+externdef WriteConsoleA:PROC
+externdef WriteConsoleW:PROC
+  IFDEF __UNICODE__
+    WriteConsole equ ReadConsoleW
+  ELSE
+    WriteConsole equ ReadConsoleA
+  ENDIF
 
 ; void ExitProcess(
     ;   UINT uExitCode
@@ -35,61 +56,108 @@ extern ExitProcess:PROC
 
 extern GetStdHandle : PROC
 
-.DATA
-buffer BYTE 1024 DUP(0)
-bufferSize DWORD 1024
-bufferRead DWORD 0
-tmp DWORD 0
+.data
+    hStdin QWORD 0
+    hStdout QWORD 0
 
-hStdin DWORD 0
-hStdout DWORD 0
+    charTest BYTE 'i'
 
-msgBuffer1 DB "Hay vocales de tipo i", 0
-msgBuffer2 DB "No hay vocales de tipo i", 0
+    ; Buffers
+    charsRead DWORD 0
+    charsWritten DWORD 0
+    BufferSize_init LABEL BYTE
+    buffer BYTE 1024 DUP(0)
+    BufferSize equ $-BufferSize_init
 
-.CODE
+    ; Text strings
+    msgMatchLength_init LABEL BYTE
+    msgMatch BYTE "Match found with character 'i'", 0
+    msgMatchLength equ $-msgMatchLength_init
+    
+    msgNoMatchLength_init LABEL BYTE
+    msgNoMatch BYTE "No match found with character 'i'", 0
+    msgNoMatchLength equ $-msgNoMatchLength_init
+    
+    msgErrorInputLength_init LABEL BYTE
+    msgErrorInput BYTE "Error retrieving the input handle device", 0
+    msgErrorInputLength equ $-msgErrorInputLength_init
+
+    msgErrorOutputLength_init LABEL BYTE
+    msgErrorOutput BYTE "Error retrieving the output handle device", 0
+    msgErrorOutputLength equ $-msgErrorOutputLength_init
+.code
+
 main PROC
-mov rcx, -10
-call GetStdHandle
-mov hStdin, eax
+    ; Stack preliminaries
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+	and rsp, -10h	; If neede, add 8 bits to align the stack to a 16-bit boundary
 
-mov rcx, -11
-call GetStdHandle
-mov hStdout, eax
+    ; Get the input device (STD_INPUT_HANDLE)
+    mov rcx, -10
+    call GetStdHandle
+    cmp rax, INVALID_HANDLE_VALUE
+    je ErrorHandleInput
+    mov hStdin, rax
 
-; Leemos el mensaje.
-mov ecx, hStdin
-mov rdx, OFFSET buffer
-mov r8d, 1024
-mov r9, OFFSET bufferRead
-call ReadConsoleA
+    ; Get the output device (STD_OUTPUT_HANDLE)
+    mov rcx, -11
+    call GetStdHandle
+    cmp rax, INVALID_HANDLE_VALUE
+    je ErrorHandleOutput
+    mov hStdout, rax
 
-; Buscamos coincidencia de 'i'
-mov ecx, bufferRead
-dec rcx
-LOOP1 :
-cmp[buffer + rcx], 'i'
-je YES
-loop LOOP1
+    ; Read the user-input text
+    mov rcx, hStdin
+    mov rdx, OFFSET buffer      ; adds a null value at the end of the buffer
+    mov r8d, BufferSize
+    mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10)
+    call ReadConsoleA
 
-NO :
-mov ecx, hStdout
-mov rdx, OFFSET msgBuffer2
-mov r8d, 25
-mov r9, OFFSET tmp
-call WriteConsoleA
-jmp EXIT
+    ; Search any match with charTest
+    mov ecx, charsRead
+    ;inc rcx     ; uncomment this line in case we want to include in the loop the null character at the end of the string
+    LOOP1:
+    mov al, BYTE PTR [buffer + rcx - 1]
+    cmp al, charTest
+    je Yes
+    loop LOOP1
 
-YES : ; Hay coincidencia
-; Mostramos el mensaje por la pantalla.
-mov ecx, hStdout
-mov rdx, OFFSET msgBuffer1
-mov r8d, 22
-mov r9, OFFSET tmp
-call WriteConsoleA
+    No:     ; No match found
+    mov rcx, hStdout
+    mov rdx, OFFSET msgNoMatch
+    mov r8d, msgNoMatchLength
+    mov r9, OFFSET charsWritten
+    call WriteConsoleA
+    jmp Exit
 
-EXIT :
-mov rcx, EXIT_SUCCESS
-call ExitProcess
+    Yes:    ; Match found
+    mov rcx, hStdout
+    mov rdx, OFFSET msgMatch
+    mov r8d, msgMatchLength
+    mov r9, OFFSET charsWritten
+    call WriteConsoleA
+    jmp Exit
+
+    ; Show the error while getting the output handle
+    ErrorHandleInput:
+    mov rdx, OFFSET msgErrorInput
+    mov r8d, msgErrorInputLength
+    jmp ErrorHandle
+    
+    ErrorHandleOutput:
+    mov rdx, Offset msgErrorOutput
+    mov r8d, msgErrorOutputLength
+
+    ErrorHandle:
+    mov rcx, hStdout
+    mov r9, OFFSET charsWritten
+    call WriteConsoleA
+
+    ; Exit the application
+    Exit:
+    mov rcx, EXIT_SUCCESS
+    call ExitProcess
+
 main ENDP
+
 END
