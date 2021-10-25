@@ -80,9 +80,13 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,15 +122,22 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>main</EntryPointSymbol>
-      <LargeAddressAware>false</LargeAddressAware>
+      <AdditionalDependencies>gdiplus.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>true</LargeAddressAware>
     </Link>
     <MASM>
       <PreserveIdentifierCase>1</PreserveIdentifierCase>
+      <GeneratePreprocessedSourceListing>true</GeneratePreprocessedSourceListing>
+      <ListAllAvailableInformation>true</ListAllAvailableInformation>
+      <DisableSymbolTable>true</DisableSymbolTable>
+      <ErrorReporting />
+      <AssembledCodeListingFile>$(OutDir)$(ProjectName).lst</AssembledCodeListingFile>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -145,9 +156,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EntryPointSymbol>main</EntryPointSymbol>
+      <AdditionalDependencies>gdiplus.lib;shlwapi.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LargeAddressAware>false</LargeAddressAware>
     </Link>
     <MASM>
       <PreserveIdentifierCase>1</PreserveIdentifierCase>
+      <ErrorReporting />
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AssembledCodeListingFile>$(OutDir)$(ProjectName).lst</AssembledCodeListingFile>
     </MASM>
   </ItemDefinitionGroup>
   <ItemGroup>
