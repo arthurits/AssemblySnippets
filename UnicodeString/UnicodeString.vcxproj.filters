@@ -15,6 +15,19 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <MASM Include="Main.asm" />
+    <MASM Include="FunctionProtos.asm">
+      <Filter>Archivos de origen</Filter>
+    </MASM>
+    <MASM Include="VariableDefinitions.asm">
+      <Filter>Archivos de origen</Filter>
+    </MASM>
+    <MASM Include="Main.asm">
+      <Filter>Archivos de origen</Filter>
+    </MASM>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Resources.rc">
+      <Filter>Archivos de recursos</Filter>
+    </ResourceCompile>
   </ItemGroup>
 </Project>

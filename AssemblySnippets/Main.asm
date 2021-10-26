@@ -15,7 +15,7 @@ endif
 
 ; Constants and parameters
 EXIT_SUCCESS EQU 0
-INVALID_HANDLE_VALUE equ -1;
+INVALID_HANDLE_VALUE equ -1
 
 
 ; BOOL WINAPI ReadConsole(
