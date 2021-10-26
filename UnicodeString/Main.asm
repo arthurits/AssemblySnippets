@@ -116,3 +116,17 @@ WaitKey PROC
 WaitKey ENDP
 
 END
+
+; http://masm32.com/board/index.php?topic=6259.0
+;UnicodeString MACRO ansiArg, ucArg
+;  pushad
+;  mov esi, ansiArg
+;  mov edi, ucArg
+;  xor eax, eax
+;  .Repeat
+;	lodsb
+;	stosw
+;  .Until !eax
+;  popad
+;  EXITM <ucArg>
+;ENDM
