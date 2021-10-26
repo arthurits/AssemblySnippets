@@ -16,6 +16,9 @@ INFINITE    equ -1  ;0FFFFFFFFh
 EXIT_SUCCESS equ 0
 INVALID_HANDLE_VALUE equ -1
 
+STD_INPUT_HANDLE equ -10
+STD_OUTPUT_HANDLE equ -11
+
 ;
 ; ************************** win64 types ********************************
 ;
