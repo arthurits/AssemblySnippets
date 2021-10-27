@@ -18,8 +18,7 @@ include FunctionProtos.asm
 	msgString    BYTE    "My first message", 13, 10, "on the console.", 13, 10, 0
     msgStringLength equ $-msgString
 
-    msgWait     BYTE    13, 10, "(Press any key to exit...)", 0
-    msgWaitLength equ $-msgWait
+    msgUnicode WORD msgStringLength*2 DUP(0)
 
 .code
 
@@ -43,6 +42,20 @@ main PROC
     mov hStdout, rax
 
 	; Show some text
+    mov rax, OFFSET msgUnicode
+    push rax
+    mov rax, OFFSET msgString
+    push rax
+    call UnicodeString
+    add rsp, 2*8
+
+    mov rcx, hStdout
+    mov rdx, OFFSET msgUnicode
+    mov r8d, msgStringLength
+    shl r8d, 1
+    mov r9, OFFSET charsWritten
+    call WriteConsole
+
     mov rcx, hStdout
     mov rdx, OFFSET msgString
     mov r8d, msgStringLength
@@ -50,7 +63,10 @@ main PROC
     call WriteConsoleA
 
     ; Call wait-key
+    push hStdout
+    push hStdin
     call WaitKey
+    add rsp, 2*8
 
 	Exit:
 	mov rcx, EXIT_SUCCESS
@@ -58,39 +74,50 @@ main PROC
 main ENDP
 
 
-WaitKey PROC
+WaitKey PROC    hIn:QWORD, hOut:QWORD
 
     LOCAL chars: DWORD
-    
+    LOCAL inStd: QWORD
+    LOCAL outStd: QWORD
+
+    .data
+        msgWait     BYTE    13, 10, "(Press enter to exit...)", 0
+        msgWaitLength equ $-msgWait
+
+    .code
+
     ; Stack alignment
 	mov r15, rsp
 	sub rsp, 8*4	; Shallow space for Win32 API x64 calls
 	and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
 	sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
-    cmp hStdout, 0
-    jne ShowMsg
+    ; Check whether hStdout is set
+    cmp hOut, 0
+    jne CheckStdin
     
-    ; Get the output device (STD_OUTPUT_HANDLE)
+    ; Get the output device
     mov rcx, STD_OUTPUT_HANDLE
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov hStdout, rax
+    mov outStd, rax
 
-    cmp hStdin, 0
+    ; Check whether hStdin is set
+    CheckStdin:
+    cmp hIn, 0
     jne ShowMsg
 
-    ; Get the input device (STD_INPUT_HANDLE)
+    ; Get the input device
     mov rcx, STD_INPUT_HANDLE
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov hStdin, rax
+    mov inStd, rax
 
     ShowMsg:
     ; Show the key-press message   
-    mov rcx, hStdout
+    mov rcx, outStd
     mov rdx, OFFSET msgWait
     mov r8d, msgWaitLength
     lea rax, chars
@@ -98,7 +125,7 @@ WaitKey PROC
     call WriteConsoleA
 
     ; Read the user-input text
-    mov rcx, hStdin
+    mov rcx, inStd
     lea rax, OFFSET msgWait
     mov rdx, rax
     mov r8d, 1
@@ -106,14 +133,27 @@ WaitKey PROC
     mov r9, rax
     call ReadConsoleA
 
-    ;mov rsp, rbp ; remove locals from stack
-    ;pop rbp
-
     ExitWait:
-    add rsp, r15	; Restore the stack pointer to point to the return address
-	ret
+    add rsp, r15	; Restore the stack pointer before the alignment took place
+	
+    ret ;mov rsp, rbp ; remove locals from stack
+        ;pop rbp
 
 WaitKey ENDP
+
+
+; Convert an ansi string into unicode. Sourced from: http://masm32.com/board/index.php?topic=6259.0
+UnicodeString PROC  ansiArg: QWORD, ucArg: QWORD
+    mov rsi, ansiArg
+    mov rdi, ucArg
+    xor rax, rax
+    Loop1:
+        lodsb
+        stosw
+    cmp rax, 0
+    jne Loop1
+    ret
+UnicodeString ENDP
 
 END
 
