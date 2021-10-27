@@ -15,7 +15,7 @@ include FunctionProtos.asm
     charsRead   DWORD   0
 	charsWritten DWORD	0
 
-	msgString    BYTE    "My first message", 13, 10, "on the console.", 13, 10, 0
+	msgString    BYTE    "My first Unicode message", 13, 10, "on the console.", 13, 10, 0
     msgStringLength equ $-msgString
 
     msgUnicode WORD msgStringLength*2 DUP(0)
@@ -56,11 +56,11 @@ main PROC
     mov r9, OFFSET charsWritten
     call WriteConsole
 
-    mov rcx, hStdout
-    mov rdx, OFFSET msgString
-    mov r8d, msgStringLength
-    mov r9, OFFSET charsWritten
-    call WriteConsoleA
+    ;mov rcx, hStdout
+    ;mov rdx, OFFSET msgString
+    ;mov r8d, msgStringLength
+    ;mov r9, OFFSET charsWritten
+    ;call WriteConsoleA
 
     ; Call wait-key
     push hStdout
