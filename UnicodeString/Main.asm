@@ -9,23 +9,23 @@ include FunctionProtos.asm
 
 
 .data
-	hStdin QWORD 0
+    hStdin QWORD 0
     hStdout QWORD 0
     
     charsRead   DWORD   0
-	charsWritten DWORD	0
+    charsWritten DWORD	0
 
-	msgString    BYTE    "My first Unicode message", 13, 10, "on the console.", 13, 10, 0
+    msgString    BYTE    "My first Unicode message", 13, 10, "on the console.", 13, 10, 0
     msgStringLength equ $-msgString
 
-    msgUnicode WORD msgStringLength*2 DUP(0)
+    msgUnicode WORD msgStringLength*2 DUP(0)	; so we automatically have the null termination
 
 .code
 
 main PROC
-	; Stack preliminaries
+    ; Stack preliminaries
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-	and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
+    and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input device (STD_INPUT_HANDLE)
     mov rcx, STD_INPUT_HANDLE
@@ -41,7 +41,7 @@ main PROC
     je Exit
     mov hStdout, rax
 
-	; Show some text
+    ; Show some text
     mov rax, OFFSET msgUnicode
     push rax
     mov rax, OFFSET msgString
@@ -68,9 +68,9 @@ main PROC
     call WaitKey
     add rsp, 2*8
 
-	Exit:
-	mov rcx, EXIT_SUCCESS
-	call ExitProcess
+    Exit:
+    mov rcx, EXIT_SUCCESS
+    call ExitProcess
 main ENDP
 
 
@@ -87,10 +87,10 @@ WaitKey PROC    hIn:QWORD, hOut:QWORD
     .code
 
     ; Stack alignment
-	mov r15, rsp
-	sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-	and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
-	sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+    mov r15, rsp
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
     cmp hOut, 0
@@ -150,7 +150,7 @@ UnicodeString PROC  ansiArg: QWORD, ucArg: QWORD
     Loop1:
         lodsb
         stosw
-    cmp rax, 0
+    cmp rax, 0	; we've reached the null end-character
     jne Loop1
     ret
 UnicodeString ENDP
