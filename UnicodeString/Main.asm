@@ -150,7 +150,7 @@ UnicodeString PROC  ansiArg: QWORD, ucArg: QWORD
     Loop1:
         lodsb
         stosw
-    cmp rax, 0	; we've reached the null end-character
+    cmp rax, 0	; we've reached the null end-character in ansiArg
     jne Loop1
     ret
 UnicodeString ENDP
