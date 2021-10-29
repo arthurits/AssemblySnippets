@@ -91,7 +91,7 @@ main PROC
     mov msgHeap, rax
 
     ; Convert byte string to word string
-	mov DWORD PTR [rsp+40], msgStackByteLength
+	mov DWORD PTR [rsp+40], msgHeapByteLength
 	mov rax, msgHeap
 	mov QWORD PTR [rsp+32], rax
 	mov r9, -1			; since lpGlobal is null-terminated this (the size in bytes) can be set to -1
@@ -123,7 +123,7 @@ main PROC
     mov r8, msgHeap
     mov rdx, NULL
     mov rcx, rax	; ProcessHeap
-    call HeapFree	; Arguments: ProcessHeap, NULL, file
+    call HeapFree	; Arguments: ProcessHeap, NULL, lpMem
 
     mov rcx, EXIT_SUCCESS
     call ExitProcess
