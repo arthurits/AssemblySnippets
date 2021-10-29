@@ -19,6 +19,12 @@ INVALID_HANDLE_VALUE    equ -1
 STD_INPUT_HANDLE    equ -10
 STD_OUTPUT_HANDLE   equ -11
 
+; MultiByteToWideChar
+CP_UTF8				equ 65001	; UTF-8 translation
+
+; Heap allocation
+HEAP_ZERO_MEMORY    equ 08h
+
 ;
 ; ************************** win64 types ********************************
 ;

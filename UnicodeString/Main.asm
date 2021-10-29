@@ -15,33 +15,43 @@ include FunctionProtos.asm
     charsRead   DWORD   0
     charsWritten DWORD	0
 
-    msgString    BYTE    "My first Unicode message", 13, 10, "on the console.", 13, 10, 0
+    msgString    BYTE    "My first Unicode message", 13, 10, "using 'lodsb' and 'stosw'.", 13, 10, 0
     msgStringLength equ $-msgString
+    msgUnicode WORD msgStringLength*2 DUP(0)
 
-    msgUnicode WORD msgStringLength*2 DUP(0)	; so we automatically have the null termination
+    msgStackByte    BYTE    "My second Unicode message", 13, 10, "using the stack to allocate it.", 13, 10, 0
+    msgStackByteLength  equ $-msgStackByte
+    msgStack    QWORD   0
+
+    msgHeapByte BYTE    "My third Unicode message", 13, 10, "using the heap to allocate it.", 13, 10, 0
+    msgHeapByteLength   equ $-msgHeapByte
+    msgHeap     QWORD   0
 
 .code
 
 main PROC
+    ; Allocate space on the stack for msgStack
+    mov msgStack, rsp
+    sub rsp, msgStackByteLength*2
+    
     ; Stack preliminaries
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*6	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
 
-    ; Get the input device (STD_INPUT_HANDLE)
+    ; Get the input and output devices
     mov rcx, STD_INPUT_HANDLE
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je Exit
     mov hStdin, rax
 
-    ; Get the output device (STD_OUTPUT_HANDLE)
     mov rcx, STD_OUTPUT_HANDLE
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je Exit
     mov hStdout, rax
 
-    ; Show some text
+    ; Show the first message
     mov rax, OFFSET msgUnicode
     push rax
     mov rax, OFFSET msgString
@@ -56,11 +66,46 @@ main PROC
     mov r9, OFFSET charsWritten
     call WriteConsole
 
-    ;mov rcx, hStdout
-    ;mov rdx, OFFSET msgString
-    ;mov r8d, msgStringLength
-    ;mov r9, OFFSET charsWritten
-    ;call WriteConsoleA
+    ; Show the second message
+    ;mov rax, OFFSET msgStack
+    push msgStack
+    mov rax, OFFSET msgStackByte
+    push rax
+    call UnicodeString
+    add rsp, 8*2
+
+    mov rcx, hStdout
+    mov rdx, msgStack
+    mov r8d, msgStackByteLength
+    shl r8d, 1
+    mov r9, OFFSET charsWritten
+    call WriteConsole
+
+    ; Show the third message
+    call GetProcessHeap
+    mov r8, msgHeapByteLength
+    shl r8, 1
+    mov rdx, HEAP_ZERO_MEMORY
+    mov rcx, rax
+    call HeapAlloc
+    mov msgHeap, rax
+
+    ; Convert byte string to word string
+	mov DWORD PTR [rsp+40], msgStackByteLength
+	mov rax, msgHeap
+	mov QWORD PTR [rsp+32], rax
+	mov r9, -1			; since lpGlobal is null-terminated this (the size in bytes) can be set to -1
+	mov r8, OFFSET msgHeapByte
+	mov rdx, NULL
+	mov rcx, CP_UTF8
+	call MultiByteToWideChar
+
+    mov rcx, hStdout
+    mov rdx, msgHeap
+    mov r8d, msgHeapByteLength
+    shl r8d, 1
+    mov r9, OFFSET charsWritten
+    call WriteConsole
 
     ; Call wait-key
     push hStdout
@@ -69,8 +114,20 @@ main PROC
     add rsp, 2*8
 
     Exit:
+    ; Deallocate the stack space for msgStack
+    mov rsp, msgStack
+    ;add rsp, msgStackByteLenth*2 ; alternate way to do the same deallocation
+    
+    ; Deallocate the heap space for msgHeap
+    call GetProcessHeap
+    mov r8, msgHeap
+    mov rdx, NULL
+    mov rcx, rax	; ProcessHeap
+    call HeapFree	; Arguments: ProcessHeap, NULL, file
+
     mov rcx, EXIT_SUCCESS
     call ExitProcess
+
 main ENDP
 
 
