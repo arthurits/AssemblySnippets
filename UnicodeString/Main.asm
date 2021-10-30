@@ -85,7 +85,7 @@ main PROC
     call GetProcessHeap
     mov r8, msgHeapByteLength
     shl r8, 1
-    mov rdx, HEAP_ZERO_MEMORY
+    mov rdx, NULL
     mov rcx, rax
     call HeapAlloc
     mov msgHeap, rax
