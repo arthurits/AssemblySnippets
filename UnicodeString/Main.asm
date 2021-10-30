@@ -16,15 +16,15 @@ include FunctionProtos.asm
     charsWritten DWORD	0
 
     msgString    BYTE    "My first Unicode message", 13, 10, "using 'lodsb' and 'stosw'.", 13, 10, 0
-    msgStringLength equ $-msgString
-    msgUnicode WORD msgStringLength*2 DUP(0)
+    msgStringChars equ $-msgString
+    msgUnicode TCHAR msgStringChars*SIZEOF(TCHAR) DUP(0)
 
     msgStackByte    BYTE    "My second Unicode message", 13, 10, "using the stack to allocate it.", 13, 10, 0
-    msgStackByteLength  equ $-msgStackByte
+    msgStackByteChars  equ $-msgStackByte
     msgStack    QWORD   0
 
     msgHeapByte BYTE    "My third Unicode message", 13, 10, "using the heap to allocate it.", 13, 10, 0
-    msgHeapByteLength   equ $-msgHeapByte
+    msgHeapByteChars   equ $-msgHeapByte
     msgHeap     QWORD   0
 
 .code
@@ -32,7 +32,7 @@ include FunctionProtos.asm
 main PROC
     ; Allocate space on the stack for msgStack
     mov msgStack, rsp
-    sub rsp, msgStackByteLength*2
+    sub rsp, msgStackByteChars*SIZEOF(TCHAR)
     
     ; Stack preliminaries
     sub rsp, 8*6	; Shallow space for Win32 API x64 calls
@@ -61,8 +61,7 @@ main PROC
 
     mov rcx, hStdout
     mov rdx, OFFSET msgUnicode
-    mov r8d, msgStringLength
-    shl r8d, 1
+    mov r8d, msgStringChars
     mov r9, OFFSET charsWritten
     call WriteConsole
 
@@ -76,22 +75,22 @@ main PROC
 
     mov rcx, hStdout
     mov rdx, msgStack
-    mov r8d, msgStackByteLength
-    shl r8d, 1
+    mov r8d, msgStackByteChars
     mov r9, OFFSET charsWritten
     call WriteConsole
+    mov eax, charsWritten
 
     ; Show the third message
     call GetProcessHeap
-    mov r8, msgHeapByteLength
-    shl r8, 1
+    mov r8, msgHeapByteChars
+    shl r8, SIZEOF(TCHAR)-1
     mov rdx, NULL
     mov rcx, rax
     call HeapAlloc
     mov msgHeap, rax
 
     ; Convert byte string to word string
-	mov DWORD PTR [rsp+40], msgHeapByteLength
+	mov DWORD PTR [rsp+40], msgHeapByteChars
 	mov rax, msgHeap
 	mov QWORD PTR [rsp+32], rax
 	mov r9, -1			; since lpGlobal is null-terminated this (the size in bytes) can be set to -1
@@ -102,8 +101,7 @@ main PROC
 
     mov rcx, hStdout
     mov rdx, msgHeap
-    mov r8d, msgHeapByteLength
-    shl r8d, 1
+    mov r8d, msgHeapByteChars
     mov r9, OFFSET charsWritten
     call WriteConsole
 
