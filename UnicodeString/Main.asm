@@ -7,23 +7,21 @@ endif
 include VariableDefinitions.asm
 include FunctionProtos.asm
 
-
 .data
     hStdin QWORD 0
     hStdout QWORD 0
     
-    charsRead   DWORD   0
     charsWritten DWORD	0
 
-    msgString    BYTE    "My first Unicode message", 13, 10, "using 'lodsb' and 'stosw'.", 13, 10, 0
+    msgString    BYTE    "My first Unicode message using the '.data' section to allocate it", 13, 10, "and 'lodsb' and 'stosw' instructions.", 13, 10, 0
     msgStringChars equ $-msgString
     msgUnicode TCHAR msgStringChars*SIZEOF(TCHAR) DUP(0)
 
-    msgStackByte    BYTE    "My second Unicode message", 13, 10, "using the stack to allocate it.", 13, 10, 0
+    msgStackByte    BYTE    "My second Unicode message using the stack to allocate it", 13, 10, "and 'lodsb' and 'stosw' instructions.", 13, 10, 0
     msgStackByteChars  equ $-msgStackByte
     msgStack    QWORD   0
 
-    msgHeapByte BYTE    "My third Unicode message", 13, 10, "using the heap to allocate it.", 13, 10, 0
+    msgHeapByte BYTE    "My third Unicode message using the heap to allocate it", 13, 10, "and calling Win32 API 'MultiByteToWideChar' function.", 13, 10, 0
     msgHeapByteChars   equ $-msgHeapByte
     msgHeap     QWORD   0
 
@@ -66,7 +64,6 @@ main PROC
     call WriteConsole
 
     ; Show the second message
-    ;mov rax, OFFSET msgStack
     push msgStack
     mov rax, OFFSET msgStackByte
     push rax
@@ -78,7 +75,6 @@ main PROC
     mov r8d, msgStackByteChars
     mov r9, OFFSET charsWritten
     call WriteConsole
-    mov eax, charsWritten
 
     ; Show the third message
     call GetProcessHeap
@@ -93,7 +89,7 @@ main PROC
 	mov DWORD PTR [rsp+40], msgHeapByteChars
 	mov rax, msgHeap
 	mov QWORD PTR [rsp+32], rax
-	mov r9, -1			; since lpGlobal is null-terminated this (the size in bytes) can be set to -1
+	mov r9, -1			; since msgHeap is null-terminated this (the size in bytes) can be set to -1
 	mov r8, OFFSET msgHeapByte
 	mov rdx, NULL
 	mov rcx, CP_UTF8
@@ -121,7 +117,7 @@ main PROC
     mov r8, msgHeap
     mov rdx, NULL
     mov rcx, rax	; ProcessHeap
-    call HeapFree	; Arguments: ProcessHeap, NULL, lpMem
+    call HeapFree	; Arguments: ProcessHeap, NULL, lpMsg
 
     mov rcx, EXIT_SUCCESS
     call ExitProcess
@@ -129,15 +125,13 @@ main PROC
 main ENDP
 
 
-WaitKey PROC    hIn:QWORD, hOut:QWORD
+WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     LOCAL chars: DWORD
-    LOCAL inStd: QWORD
-    LOCAL outStd: QWORD
 
     .data
         msgWait     BYTE    13, 10, "(Press enter to exit...)", 0
-        msgWaitLength equ $-msgWait
+        msgWaitChars equ $-msgWait
 
     .code
 
@@ -156,7 +150,7 @@ WaitKey PROC    hIn:QWORD, hOut:QWORD
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov outStd, rax
+    mov hOut, rax
 
     ; Check whether hStdin is set
     CheckStdin:
@@ -168,19 +162,19 @@ WaitKey PROC    hIn:QWORD, hOut:QWORD
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov inStd, rax
+    mov hIn, rax
 
     ShowMsg:
     ; Show the key-press message   
-    mov rcx, outStd
+    mov rcx, hOut
     mov rdx, OFFSET msgWait
-    mov r8d, msgWaitLength
+    mov r8d, msgWaitChars
     lea rax, chars
     mov r9, rax
     call WriteConsoleA
 
     ; Read the user-input text
-    mov rcx, inStd
+    mov rcx, hIn
     lea rax, OFFSET msgWait
     mov rdx, rax
     mov r8d, 1
@@ -198,7 +192,7 @@ WaitKey ENDP
 
 
 ; Convert an ansi string into unicode. Sourced from: http://masm32.com/board/index.php?topic=6259.0
-UnicodeString PROC  ansiArg: QWORD, ucArg: QWORD
+UnicodeString PROC uses rsi rdi ansiArg: QWORD, ucArg: QWORD
     mov rsi, ansiArg
     mov rdi, ucArg
     xor rax, rax
