@@ -7,55 +7,9 @@ ifndef __UNICODE__
 __UNICODE__ equ 1
 endif
 
-ifdef __UNICODE__
-    TCHAR   typedef WORD
-else
-    TCHAR   typedef BYTE
-endif
-
-; Constants and parameters
-EXIT_SUCCESS EQU 0
-INVALID_HANDLE_VALUE equ -1
-
-
-; BOOL WINAPI ReadConsole(
-    ;   _In_     HANDLE  hConsoleInput,
-    ;   _Out_    LPVOID  lpBuffer,
-    ;   _In_     DWORD   nNumberOfCharsToRead,
-    ;   _Out_    LPDWORD lpNumberOfCharsRead,
-    ;   _In_opt_ LPVOID  pInputControl
-    ; );
-;extern ReadConsoleA:PROC; Version ASCII
-externdef ReadConsoleA:PROC
-externdef ReadConsoleW:PROC
-  IFDEF __UNICODE__
-    ReadConsole equ ReadConsoleW
-  ELSE
-    ReadConsole equ ReadConsoleA
-  ENDIF
-
-; BOOL WINAPI WriteConsole(
-    ;   _In_             HANDLE  hConsoleOutput,
-    ;   _In_       const VOID* lpBuffer,
-    ;   _In_             DWORD   nNumberOfCharsToWrite,
-    ;   _Out_            LPDWORD lpNumberOfCharsWritten,
-    ;   _Reserved_       LPVOID  lpReserved
-    ; );
-;extern WriteConsoleA:PROC; Version ASCII
-externdef WriteConsoleA:PROC
-externdef WriteConsoleW:PROC
-  IFDEF __UNICODE__
-    WriteConsole equ WriteConsoleW
-  ELSE
-    WriteConsole equ WriteConsoleA
-  ENDIF
-
-; void ExitProcess(
-    ;   UINT uExitCode
-    ; );
-externdef ExitProcess:PROC
-
-externdef GetStdHandle : PROC
+; Includes
+include VariableDefinitions.asm
+include FunctionProtos.asm
 
 .data
     hStdin QWORD 0
@@ -71,7 +25,7 @@ externdef GetStdHandle : PROC
     BufferSize equ $-buffer
 
     ; Text strings
-    msgInput    BYTE    "Please enter some text: ", 13, 10, 0
+    msgInput    BYTE    "Please enter some text (up to 1022 chars): ", 13, 10, 0
     msgInputLength equ $-msgInput
 
     msgMatch BYTE "Match found with character 'i'", 0
@@ -92,14 +46,14 @@ main PROC
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
 	and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
 
-    ; Get the input device (STD_INPUT_HANDLE)
-    mov rcx, -10
+    ; Get the input device
+    mov rcx, STD_INPUT_HANDLE
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ErrorHandleInput
     mov hStdin, rax
 
-    ; Get the output device (STD_OUTPUT_HANDLE)
+    ; Get the output device
     mov rcx, -11
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
@@ -115,8 +69,8 @@ main PROC
 
     ; Read the user-input text
     mov rcx, hStdin
-    lea rax, OFFSET buffer
-    mov rdx, rax      ; adds a null value at the end of the buffer
+    lea rbx, OFFSET buffer
+    mov rdx, rbx      ; adds a null value at the end of the buffer
     mov r8d, BufferSize
     mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10) chars but not the null value at the end
     call ReadConsoleA
@@ -124,9 +78,9 @@ main PROC
     ; Search any match with charTest
     mov ecx, charsRead
     ;inc rcx     ; uncomment this line in case we want to include in the loop the null character at the end of the string
-    lea rax, OFFSET buffer
+    ;lea rbx, OFFSET buffer ; this addres is already in rbx
     Loop1:        
-        mov al, BYTE PTR [rax + rcx - 1]
+        mov al, BYTE PTR [rbx + rcx - 1]
         cmp al, charTest
         je Yes
     loop Loop1

@@ -27,7 +27,6 @@
       <FileType>Document</FileType>
     </None>
     <MASM Include="Main.asm" />
-    <None Include="README.md" />
     <None Include="VariableDefinitions.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>
@@ -40,13 +39,16 @@
     <ResourceCompile Include="Resources.rc" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
     <Image Include="small.ico" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{42a7775f-cb46-4dce-8390-38636256fc2f}</ProjectGuid>
-    <RootNamespace>UnicodeString</RootNamespace>
+    <ProjectGuid>{83acfc71-498f-424c-8403-8672a976cc0d}</ProjectGuid>
+    <RootNamespace>StringLooping</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -162,6 +164,8 @@
       <ErrorReporting />
       <EnableAssemblyGeneratedCodeListing>
       </EnableAssemblyGeneratedCodeListing>
+      <AddFirstPassListing>
+      </AddFirstPassListing>
     </MASM>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

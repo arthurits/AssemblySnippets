@@ -25,13 +25,13 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FunctionProtos.asm">
-      <Filter>Archivos de origen</Filter>
-    </None>
+    <None Include="README.md" />
     <None Include="VariableDefinitions.asm">
       <Filter>Archivos de origen</Filter>
     </None>
-    <None Include="README.md" />
+    <None Include="FunctionProtos.asm">
+      <Filter>Archivos de origen</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">
