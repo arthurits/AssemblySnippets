@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TemplateConsole", "Template
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "StringLooping", "StringLooping\StringLooping.vcxproj", "{83ACFC71-498F-424C-8403-8672A976CC0D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TemplateWindows", "TemplateWindows\TemplateWindows.vcxproj", "{C481CC6D-6B98-482E-B441-2D40F368BE7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -39,6 +41,14 @@ Global
 		{83ACFC71-498F-424C-8403-8672A976CC0D}.Release|x64.Build.0 = Release|x64
 		{83ACFC71-498F-424C-8403-8672A976CC0D}.Release|x86.ActiveCfg = Release|Win32
 		{83ACFC71-498F-424C-8403-8672A976CC0D}.Release|x86.Build.0 = Release|Win32
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Debug|x64.ActiveCfg = Debug|x64
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Debug|x64.Build.0 = Debug|x64
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Debug|x86.ActiveCfg = Debug|Win32
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Debug|x86.Build.0 = Debug|Win32
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Release|x64.ActiveCfg = Release|x64
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Release|x64.Build.0 = Release|x64
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Release|x86.ActiveCfg = Release|Win32
+		{C481CC6D-6B98-482E-B441-2D40F368BE7B}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
