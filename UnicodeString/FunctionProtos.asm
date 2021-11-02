@@ -17,6 +17,8 @@
 ; void ExitProcess(UINT uExitCode)
 externdef ExitProcess:PROC
 
+externdef FreeConsole:PROC
+
 externdef GetStdHandle:PROC
 
 ; HANDLE GetProcessHeap()
@@ -37,6 +39,15 @@ externdef ReadConsoleW:PROC
     ReadConsole equ ReadConsoleW
   ELSE
     ReadConsole equ ReadConsoleA
+  ENDIF
+
+; BOOL WINAPI ReadConsoleInput(_In_ HANDLE hConsoleInput, _Out_ PINPUT_RECORD lpBuffer, _In_ DWORD nLength, _Out_ LPDWORD lpNumberOfEventsRead)
+externdef ReadConsoleInputA:PROC
+externdef ReadConsoleInputW:PROC
+  IFDEF __UNICODE__
+    ReadConsoleInput equ ReadConsoleInputW
+  ELSE
+    ReadConsoleInput equ ReadConsoleInputA
   ENDIF
 
 ; BOOL WINAPI WriteConsole(_In_ HANDLE hConsoleOutput, _In_ const VOID* lpBuffer, _In_ DWORD nNumberOfCharsToWrite, _Out_ LPDWORD lpNumberOfCharsWritten, _Reserved_ LPVOID lpReserved)
