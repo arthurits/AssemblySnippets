@@ -172,29 +172,20 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ShowMsg:
     ; Show the key-press message   
-    mov rcx, hOut
-    mov rdx, OFFSET msgWait
+    lea r9, chars
     mov r8d, msgWaitChars
-    lea rax, chars
-    mov r9, rax
+    mov rdx, OFFSET msgWait
+    mov rcx, hOut
     call WriteConsoleA
 
-    ; Read the user-input text
-    ;mov rcx, hIn
-    ;lea rax, OFFSET msgWait
-    ;mov rdx, rax
-    ;mov r8d, 1
-    ;lea rax, chars
-    ;mov r9, rax
-    ;call ReadConsoleA
-    
+    ; Wait for any key pressed by the user    
     lea r9, lpEventsRead
     mov r8, 1
     lea rdx, MOUSE_KEY
     mov rcx, hIn
     ReadInput:
-    call ReadConsoleInput   ; invoke	ReadConsoleInput,hIn,addr MOUSE_KEY,TRUE,addr Result    ; http://masm32.com/board/index.php?topic=7676.0
-	cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+        call ReadConsoleInput
+	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
     ExitWait:

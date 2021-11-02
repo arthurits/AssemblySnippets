@@ -123,6 +123,8 @@ main PROC
         call WaitKey
         add rsp, 2*8
 
+        call FreeConsole
+
         mov rcx, EXIT_SUCCESS
         call ExitProcess
 
@@ -131,9 +133,11 @@ main ENDP
 WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     LOCAL chars: DWORD
+    LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
+    LOCAL lpEventsRead: QWORD
 
     .data
-        msgWait     BYTE    13, 10, "(Press enter to exit...)", 0
+        msgWait     BYTE    13, 10, "(Press any key to exit...)", 0
         msgWaitChars equ $-msgWait
 
     .code
@@ -169,21 +173,21 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ShowMsg:
     ; Show the key-press message   
-    mov rcx, hOut
-    mov rdx, OFFSET msgWait
+    lea r9, chars
     mov r8d, msgWaitChars
-    lea rax, chars
-    mov r9, rax
+    mov rdx, OFFSET msgWait
+    mov rcx, hOut
     call WriteConsoleA
 
-    ; Read the user-input text
+    ; Wait for any key pressed by the user    
+    lea r9, lpEventsRead
+    mov r8, 1
+    lea rdx, MOUSE_KEY
     mov rcx, hIn
-    lea rax, OFFSET msgWait
-    mov rdx, rax
-    mov r8d, 1
-    lea rax, chars
-    mov r9, rax
-    call ReadConsoleA
+    ReadInput:
+        call ReadConsoleInput
+	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+	jne ReadInput
 
     ExitWait:
     add rsp, r15	; Restore the stack pointer before the alignment took place

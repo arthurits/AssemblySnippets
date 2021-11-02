@@ -56,6 +56,55 @@ LPCTSTR     TYPEDEF QWORD
 LPTSTR      TYPEDEF QWORD
 LPBYTE      TYPEDEF QWORD
 
+
 ;
 ; ************************** Win64 structs ********************************
 ;
+
+COORD STRUCT
+  x  WORD      ?
+  y  WORD      ?
+COORD ENDS
+
+KEY_EVENT_RECORD STRUCT
+  bKeyDown          DWORD ?
+  wRepeatCount      WORD ?
+  wVirtualKeyCode   WORD ?
+  wVirtualScanCode  WORD ?
+  UNION
+    UnicodeChar     WORD ?
+    AsciiChar       BYTE ?
+  ENDS
+  dwControlKeyState DWORD ?
+KEY_EVENT_RECORD ENDS
+
+MOUSE_EVENT_RECORD STRUCT
+  dwMousePosition       COORD <>
+  dwButtonState         DWORD      ?
+  dwControlKeyState     DWORD      ?
+  dwEventFlags          DWORD      ?
+MOUSE_EVENT_RECORD ENDS
+
+WINDOW_BUFFER_SIZE_RECORD STRUCT
+  dwSize  COORD <>
+WINDOW_BUFFER_SIZE_RECORD ENDS
+
+MENU_EVENT_RECORD STRUCT
+  dwCommandId  DWORD      ?
+MENU_EVENT_RECORD ENDS
+
+FOCUS_EVENT_RECORD STRUCT
+  bSetFocus  DWORD      ?
+FOCUS_EVENT_RECORD ENDS
+
+INPUT_RECORD STRUCT
+  EventType             WORD ?
+  two_byte_alignment    WORD ?
+  UNION
+    KeyEvent                KEY_EVENT_RECORD            <>
+    MouseEvent              MOUSE_EVENT_RECORD          <>
+    WindowBufferSizeEvent   WINDOW_BUFFER_SIZE_RECORD   <>
+    MenuEvent               MENU_EVENT_RECORD           <>
+    FocusEvent              FOCUS_EVENT_RECORD          <>
+  ENDS
+INPUT_RECORD ENDS
