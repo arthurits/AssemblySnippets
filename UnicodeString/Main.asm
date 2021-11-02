@@ -188,12 +188,12 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     ;mov r9, rax
     ;call ReadConsoleA
     
-    ReadInput:
     lea r9, lpEventsRead
     mov r8, 1
     lea rdx, MOUSE_KEY
     mov rcx, hIn
-    call ReadConsoleInput   ; invoke	ReadConsoleInput,hIn,addr MOUSE_KEY,TRUE,addr Result
+    ReadInput:
+    call ReadConsoleInput   ; invoke	ReadConsoleInput,hIn,addr MOUSE_KEY,TRUE,addr Result    ; http://masm32.com/board/index.php?topic=7676.0
 	cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
