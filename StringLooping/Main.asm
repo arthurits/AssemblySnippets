@@ -180,13 +180,13 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     call WriteConsoleA
 
     ; Wait for any key pressed by the user    
+    ReadInput:
     lea r9, lpEventsRead
     mov r8, 1
     lea rdx, MOUSE_KEY
     mov rcx, hIn
-    ReadInput:
-        call ReadConsoleInput
-	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+    call ReadConsoleInput
+	cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
     ExitWait:
