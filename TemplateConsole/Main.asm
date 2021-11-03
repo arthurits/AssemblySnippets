@@ -21,7 +21,7 @@ include FunctionProtos.asm
 main PROC
     ; Stack preliminaries
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
+    and rsp, -10h	; If needed, subtract 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input and output devices
     mov rcx, STD_INPUT_HANDLE
@@ -71,7 +71,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     ; Stack alignment
     mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
+    and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
