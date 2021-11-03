@@ -1,6 +1,6 @@
 ; Programa de ejemplo en Windows :
 ; Programa que permite escribir una cadena en consola y verificar si tiene la letra "i", posteriormente mostrar en
-; pantalla la respuesta si es así o no, mostrar la cadena y su longitud
+; pantalla la respuesta si es asÃ­ o no, mostrar la cadena y su longitud
 ; https://stackoverflow.com/questions/8504097/declaring-variable-sized-arrays-in-assembly
 
 ifndef __UNICODE__
@@ -44,7 +44,7 @@ include FunctionProtos.asm
 main PROC
     ; Stack preliminaries
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-	and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
+    and rsp, -10h	; If needed, subtract 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input device
     mov rcx, STD_INPUT_HANDLE
@@ -145,7 +145,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     ; Stack alignment
     mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
+    and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
@@ -186,7 +186,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov rcx, hIn
     ReadInput:
         call ReadConsoleInput
-	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+        cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
     ExitWait:
