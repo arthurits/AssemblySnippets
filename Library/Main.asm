@@ -1,61 +1,80 @@
 
-ifndef __UNICODE__
-__UNICODE__ equ 1
-endif
+;ifndef __UNICODE__
+;__UNICODE__ equ 1
+;endif
+; -----------------------------------------
+; 64-bit library (some routines based on Irvine64.asm)
+;
+; Version 1.0, 4/11/2021
+; -----------------------------------------
+
+COMMENT !
+
+Win64 API classifies RAX,RCX,RDX,R8,R9,R10,and R11 as volatile,
+so their values are not preserved across API function calls.
+
+Bug fixes:
+
+!
+
+; Public procedures:
+; Str_lengthA
+; Str_lengthW
+; WaitKey
 
 ; Includes
 include VariableDefinitions.asm
 include FunctionProtos.asm
 
 .data
-    hStdin QWORD 0
-    hStdout QWORD 0
     
-    charsWritten DWORD	0
-
-    msgString    BYTE    "Template console project", 13, 10, 0
-    msgStringChars equ $-msgString
 
 .code
 
-main PROC
-    ; Stack preliminaries
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; If needed, add 8 bits to align the stack to a 16-bit boundary
-
-    ; Get the input and output devices
-    mov rcx, STD_INPUT_HANDLE
-    call GetStdHandle
-    cmp rax, INVALID_HANDLE_VALUE
-    je Exit
-    mov hStdin, rax
-
-    mov rcx, STD_OUTPUT_HANDLE
-    call GetStdHandle
-    cmp rax, INVALID_HANDLE_VALUE
-    je Exit
-    mov hStdout, rax
-
-    ; Show the message
-    mov rcx, hStdout
-    mov rdx, OFFSET msgString
-    mov r8d, msgStringChars
-    mov r9, OFFSET charsWritten
-    call WriteConsoleA
-
+;---------------------------------------------------------
+; Str_lengthA
+; Returns the length of a null-terminated string.
+; Receives: RCX points to the string
+; Returns: RAX = string length
+;---------------------------------------------------------
+Str_lengthA PROC uses rdi
+	mov  rdi, rcx
+	mov  rax, 0     	             ; character count
+    Loop1:
+        cmp  BYTE PTR [rdi], 0	     ; end of string?
+        je   Exit	                     ; yes: quit
+        inc  rdi	                 ; no: point to next
+        inc  rax	                 ; add 1 to count
+	jmp  Loop1
     Exit:
-    push hStdout
-    push hStdin
-    call WaitKey
-    add rsp, 2*8
+        ret
+Str_lengthA ENDP
 
-    call FreeConsole
+;---------------------------------------------------------
+; Str_lengthW
+; Returns the length of a null-terminated string.
+; Receives: RCX points to the string
+; Returns: RAX = string length
+;---------------------------------------------------------
+Str_lengthW PROC uses rdi
+	mov  rdi, rcx
+	mov  rax, 0     	             ; character count
+    Loop1:
+        cmp  WORD PTR [rdi], 0	     ; end of string?
+        je   Exit	                 ; yes: quit
+        add  rdi, 2                  ; no: point to next
+        inc  rax	                 ; add 1 to count
+	jmp  Loop1
+    Exit:
+        ret
+Str_lengthW ENDP
 
-    mov rcx, EXIT_SUCCESS
-    call ExitProcess
-
-main ENDP
-
+;---------------------------------------------------------
+; WaitKey
+; Waits for the user to press any key
+; Receives: hIn (input handle) and hOut (output handle); they can be null
+; Returns: nothing
+;---------------------------------------------------------
 WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     LOCAL chars: DWORD
