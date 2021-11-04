@@ -50,11 +50,8 @@ main PROC
     mov rbx, "a"
     Loop1:
         mov charLetter, " "
-        mov rax, charLetter
         shl charLetter, 8
-        mov rax, charLetter
         or charLetter, rbx
-        mov rax, charLetter
 
         mov r9, OFFSET charsWritten
         mov r8d, 2
