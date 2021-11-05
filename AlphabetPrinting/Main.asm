@@ -21,6 +21,7 @@ include FunctionProtos.asm
 main PROC
 
     LOCAL charLetter:QWORD
+    LOCAL addrLetter:QWORD
 
     ; Stack preliminaries
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
@@ -49,18 +50,26 @@ main PROC
     ; Loop through the alphabet and write each letter on the console
     mov rbx, "a"
     Loop1:
-        mov charLetter, " "
-        shl charLetter, 8
-        or charLetter, rbx
+        cmp rbx, "z"
+        je NoSpace
+            mov charLetter, " "
+            shl charLetter, 8
+            or charLetter, rbx
+            mov r8d, 2
+            jmp Write
+        NoSpace:
+            mov charLetter, rbx
+            mov r8d, 1
 
+        Write:
         mov r9, OFFSET charsWritten
-        mov r8d, 2
+        ;mov r8d, 2
         lea rdx, charLetter
         mov rcx, hStdout
         call WriteConsoleA
         
         inc rbx
-        cmp rbx, "z"
+    cmp rbx, "z"
     jbe Loop1
 
     Exit:
@@ -126,11 +135,11 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     call WriteConsoleA
 
     ; Wait for any key pressed by the user    
-    lea r9, lpEventsRead
-    mov r8, 1
-    lea rdx, MOUSE_KEY
-    mov rcx, hIn
     ReadInput:
+        lea r9, lpEventsRead
+        mov r8, 1
+        lea rdx, MOUSE_KEY
+        mov rcx, hIn
         call ReadConsoleInput
 	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput

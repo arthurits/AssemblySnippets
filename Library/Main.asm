@@ -32,12 +32,12 @@ include FunctionProtos.asm
 .code
 
 ;---------------------------------------------------------
-; Str_lengthA
+; StrLengthA
 ; Returns the length of a null-terminated string.
 ; Receives: RCX points to the string
 ; Returns: RAX = string length
 ;---------------------------------------------------------
-Str_lengthA PROC uses rdi
+StrLengthA PROC uses rdi
 	mov  rdi, rcx
 	mov  rax, 0     	             ; character count
     Loop1:
@@ -48,15 +48,15 @@ Str_lengthA PROC uses rdi
 	jmp  Loop1
     Exit:
         ret
-Str_lengthA ENDP
+StrLengthA ENDP
 
 ;---------------------------------------------------------
-; Str_lengthW
+; StrLengthW
 ; Returns the length of a null-terminated string.
 ; Receives: RCX points to the string
 ; Returns: RAX = string length
 ;---------------------------------------------------------
-Str_lengthW PROC uses rdi
+StrLengthW PROC uses rdi
 	mov  rdi, rcx
 	mov  rax, 0     	             ; character count
     Loop1:
@@ -67,7 +67,7 @@ Str_lengthW PROC uses rdi
 	jmp  Loop1
     Exit:
         ret
-Str_lengthW ENDP
+StrLengthW ENDP
 
 ;---------------------------------------------------------
 ; WaitKey
@@ -125,11 +125,11 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     call WriteConsoleA
 
     ; Wait for any key pressed by the user    
-    lea r9, lpEventsRead
-    mov r8, 1
-    lea rdx, MOUSE_KEY
-    mov rcx, hIn
     ReadInput:
+        lea r9, lpEventsRead
+        mov r8, 1
+        lea rdx, MOUSE_KEY
+        mov rcx, hIn
         call ReadConsoleInput
 	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
