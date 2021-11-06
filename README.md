@@ -7,7 +7,7 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 ## Code snippets list
 These are the code fragments included in this project
 * `AlphabetPrinting`. Prints each letter of the alphabet on the console.
-* `CallingConventions`. Shows how to implement the different calling conventions.
+* `CallingConventions`. Shows how to implement the CDECL, PASCAL, STDCALL, and x64 calling conventions.
 * `Library64`. Collection of useful routines used by these projects.
 * `StringLooping`. Shows how to loop through a string in order to find a matching character.
 * `UnicodeString`. Shows several methods to convert a `BYTE` string into `WORD`.

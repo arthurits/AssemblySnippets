@@ -72,7 +72,6 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
-    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
     cmp hOut, 0
@@ -115,11 +114,9 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
         cmp MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
-    ExitWait:
-    add rsp, r15	; Restore the stack pointer before the alignment took place
-	
-    ret ;mov rsp, rbp ; remove locals from stack
-        ;pop rbp
+    ExitWait:	
+    ret ;mov rsp, rbp   ; remove locals from stack
+        ;pop rbp        ; get return address
 
 WaitKey ENDP
 

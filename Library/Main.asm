@@ -18,8 +18,9 @@ Bug fixes:
 !
 
 ; Public procedures:
-; Str_lengthA
-; Str_lengthW
+; StructInit
+; StrlengthA
+; StrlengthW
 ; WaitKey
 
 ; Includes
@@ -32,6 +33,17 @@ include FunctionProtos.asm
 .code
 
 ;---------------------------------------------------------
+; StructInit
+; Initializes a struct with 0.
+; Receives: RCX pointer to the struct
+;           RDX size of the struct
+; Returns:  Nothing
+;---------------------------------------------------------
+StructInit PROC
+
+StructInit ENDP
+
+;---------------------------------------------------------
 ; StrLengthA
 ; Returns the length of a null-terminated string.
 ; Receives: RCX points to the string
@@ -42,7 +54,7 @@ StrLengthA PROC uses rdi
 	mov  rax, 0     	             ; character count
     Loop1:
         cmp  BYTE PTR [rdi], 0	     ; end of string?
-        je   Exit	                     ; yes: quit
+        je   Exit	                 ; yes: quit
         inc  rdi	                 ; no: point to next
         inc  rax	                 ; add 1 to count
 	jmp  Loop1
@@ -90,8 +102,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     ; Stack alignment
     mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Add 8 bits if needed to align to 16 bits boundary
-    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+    and rsp, -10h	; Subtract the needed bits to align to 16 bits boundary
+    ;sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
     cmp hOut, 0
@@ -135,7 +147,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 	jne ReadInput
 
     ExitWait:
-    add rsp, r15	; Restore the stack pointer before the alignment took place
+    ;add rsp, r15	; Restore the stack pointer before the alignment took place
 	
     ret ;mov rsp, rbp ; remove locals from stack
         ;pop rbp
