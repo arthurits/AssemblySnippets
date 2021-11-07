@@ -8,17 +8,17 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 * Install Visual Studio.
 * Make sure to install "Desktop development with C++".
 * Create a new C++ empty project
-![Screenshot](/Media/screenshot02.png?raw=true "Empty project")
+![Screenshot](/Media/Screenshot02.png?raw=true "Empty project")
 * Select the project just created, right click on it (or go to menu Project -> Build Customizations...) and check the masm option
-![Screenshot](/Media/screenshot03.png?raw=true "Target .masm")
+![Screenshot](/Media/Screenshot03.png?raw=true "Target .masm")
 
 ### Linker properties
 For the following options, either right click on the project and select Properties from the floating menu or go to menu Project->Properties
 * Define the programm's entry point. Go to Configuration Properties->Linker->Advanced
-![Screenshot](/Media/screenshot05.png?raw=true "Define entry point")
+![Screenshot](/Media/Screenshot05.png?raw=true "Define entry point")
 (while there, make sure the Target Machine is set to your desired program architecture)
 * Set the subsystem. Go to Configuration Properties->Linker->System
-![Screenshot](/Media/screenshot05.png?raw=true "Linker subsystem")
+![Screenshot](/Media/Screenshot05.png?raw=true "Linker subsystem")
 
 ### Macro assembler properties
 For the following options, either right click on the project and select Properties from the floating menu or go to menu Project->Properties
