@@ -7,26 +7,27 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 ## Steps (work in progress)
 * Install Visual Studio.
 * Make sure to install "Desktop development with C++".
-* Create a new C++ empty project
-![Screenshot](/Media/Screenshot02.png?raw=true "Empty project")
-* Select the project just created, right click on it (or go to menu Project -> Build Customizations...) and check the masm option
-![Screenshot](/Media/Screenshot03.png?raw=true "Target .masm")
+* Create a new C++ empty project.
+![Screenshot](/IDE%20Setup/Media/Screenshot02.png?raw=true "Empty project")
+* Select the project just created, right click on it (or go to menu **Project**->**Build Customizations...**) and check the *masm* option.
+![Screenshot](/IDE%20Setup/Media/Screenshot03.png?raw=true "Target .masm")
 
 ### Linker properties
-For the following options, either right click on the project and select Properties from the floating menu or go to menu Project->Properties
-* Define the programm's entry point. Go to Configuration Properties->Linker->Advanced
-![Screenshot](/Media/Screenshot05.png?raw=true "Define entry point")
-(while there, make sure the Target Machine is set to your desired program architecture)
-* Set the subsystem. Go to Configuration Properties->Linker->System
-![Screenshot](/Media/Screenshot05.png?raw=true "Linker subsystem")
+For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
+* Define the programm's entry point. Go to **Configuration Properties**->**Linker**->**Advanced**.
+![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Define entry point")
+
+(while there, make sure the **Target Machine** is set to your desired program architecture).
+* Set the subsystem. Go to **Configuration Properties**->**Linker**->**System**.
+![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Linker subsystem")
 
 ### Macro assembler properties
-For the following options, either right click on the project and select Properties from the floating menu or go to menu Project->Properties
-* Preserve Identifier Case (/Cp flag). Go to Configuration Properties->Microsoft Macro Assembler->General
-![Screenshot](/Media/Screenshot07-Debug.png?raw=true "Preserve identifier case")
-* Generate debug information only for Debug configuration
-![Screenshot](/Media/Screenshot07-Debug.png?raw=true "Generate debug information")
-![Screenshot](/Media/Screenshot07-Release.png?raw=true "Don't generate debug information in release mode")
+For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
+* Preserve Identifier Case (/Cp flag). Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General**.
+![Screenshot](/IDE%20Setup/Media/Screenshot07-Debug.png?raw=true "Preserve identifier case")
+* Generate debug information **only for Debug** configuration.
+![Screenshot](/IDE%20Setup/Media/Screenshot07-Debug.png?raw=true "Generate debug information")
+![Screenshot](/IDE%20Setup/Media/Screenshot07-Release.png?raw=true "Don't generate debug information in release mode")
 
 ## License
 Free for personal and not-for-profit use.
