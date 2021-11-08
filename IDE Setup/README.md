@@ -12,7 +12,7 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 * Select the project just created, right click on it (or go to menu **Project**->**Build Customizations...**) and check the `masm` option.
 ![Screenshot](/IDE%20Setup/Media/Screenshot03.png?raw=true "Target .masm")
 
-### Set directories (optional)
+### Optional: set directories
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
 * Set the output and the intermediate directories. Go to **Configuration Properties**->**General**.
 
@@ -23,7 +23,7 @@ For the following options, either right click on the project and select **Proper
 * Define the programm's entry point for `All Configurations`. Go to **Configuration Properties**->**Linker**->**Advanced**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Define entry point")
 
-(while there, make sure the **Target Machine** is set to your desired program architecture).
+(while there, make sure the **Target Machine** is set to your desired architecture).
 * Set the subsystem to either `Console` or `Windows`. Go to **Configuration Properties**->**Linker**->**System**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot06.png?raw=true "Linker subsystem")
 
@@ -39,8 +39,9 @@ For the following options, either right click on the project and select **Proper
 
 ### Optional: set external dependencies
 In case your project relies on external dependencies (such as `Irvine32.lib` or `masm32 SDK`), these three steps should be followed accordingly.
-* Add the additional libraries (*.lib) to **Configuration Properties**->**Linker**->**Enter**.
-* 
+* Add the SDK or library folder path (/LIBPATH flag) at `Additional Library Directories` in **Configuration Properties**->**Linker**->**General**.
+* Add the library files (*.lib) at `Additional Dependencies` in **Configuration Properties**->**Linker**->**Input**.
+* Add folder paths (/I flag) at `Include Paths` in **Configuration Properties**->**Microsoft Macro Assembler**->**General**.
 
 ## License
 Free for personal and not-for-profit use.
