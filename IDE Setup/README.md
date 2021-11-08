@@ -14,10 +14,12 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 
 ### Set directories (optional)
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
-* Set the input, output and intermediate directories. Go to **Configuration Properties**->**General**.
+* Set the output and the intermediate directories. Go to **Configuration Properties**->**General**.
 
 ### Linker properties
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
+* Disable incremental link in **only in Release** configurarion. Go to **Configuration Properties**->**Linker**->**General**.
+* Enable optimizations **only in Release** configuration. Go to **Configuration Properties**->**Linker**->**Optimization**
 * Define the programm's entry point for `All Configurations`. Go to **Configuration Properties**->**Linker**->**Advanced**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Define entry point")
 
@@ -32,6 +34,13 @@ For the following options, either right click on the project and select **Proper
 * Generate debug information (/Zi flag) **only for Debug** configuration.
 ![Screenshot](/IDE%20Setup/Media/Screenshot07-Debug.png?raw=true "Generate debug information")
 ![Screenshot](/IDE%20Setup/Media/Screenshot07-Release.png?raw=true "Don't generate debug information in release mode")
+* Enable flags /Sa and /Sn (**only in Debug** configuration) and set the listing file path. Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General** set the flags and type the desired path (make sure they are disabled for `Release`).
+* 
+
+### Optional: set external dependencies
+In case your project relies on external dependencies (such as `Irvine32.lib` or `masm32 SDK`), these three steps should be followed accordingly.
+* Add the additional libraries (*.lib) to **Configuration Properties**->**Linker**->**Enter**.
+* 
 
 ## License
 Free for personal and not-for-profit use.
