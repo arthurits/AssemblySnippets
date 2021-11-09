@@ -17,8 +17,8 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 For the following options, either right click on the project and select **Properties** from the floating menu or go to menu **Project**->**Properties**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot04-A.png?raw=true "Right click to select project properties")
 ![Screenshot](/IDE%20Setup/Media/Screenshot04-B.png?raw=true "Select menu project properties")
-<img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-A.png?" width=50% height=50%>
-<img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-B.png?" width=50% height=50%>
+<img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-A.png?" width=40% height=50%>
+<img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-B.png?" width=40% height=50%>
 * Set the output and the intermediate directories. Go to **Configuration Properties**->**General** and set the paths according to your own preferences.
 ![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Output directories")
 
