@@ -40,8 +40,10 @@ For the following options, either right click on the project and select **Proper
 * Preserve Identifier Case (/Cp flag). Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot10.png?raw=true "Preserve identifier case")
 * Generate debug information (/Zi flag) **only for Debug** configuration.
+
 <img src="/IDE%20Setup/Media/Screenshot11-Debug.png" alt="Generate debug information" width=49% > <img src="/IDE%20Setup/Media/Screenshot11-Release.png" alt="Don't generate debug information in release mode" width=49% >
 * Enable flags /Sa and /Sn (**only in Debug** configuration) and set the listing file path. Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General** set the flags (make sure they are disabled for `Release`) and type the desired path.
+
 <img src="/IDE%20Setup/Media/Screenshot12-Debug.png" alt="Listing options in debug mode" width=49% > <img src="/IDE%20Setup/Media/Screenshot12-Release.png" alt="Listing options in release mode" width=49% >
 
 ### Optional: set external dependencies
