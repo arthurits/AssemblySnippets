@@ -19,6 +19,7 @@ For the following options, either right click on the project and select **Proper
 
 <img src="/IDE%20Setup/Media/Screenshot04-A.png" alt="Right click to select project properties" width=51% > <img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-B.png" alt="Select menu project properties" width=48% >
 * Set the output and the intermediate directories. Go to **Configuration Properties**->**General** and set the paths according to your own preferences.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Output directories")
 
 
@@ -52,8 +53,10 @@ In case your project relies on external dependencies (such as `Irvine32.lib` or 
 
 ![Screenshot](/IDE%20Setup/Media/Screenshot13.png?raw=true "Additional library directories")
 * Add the library files (*.lib) at `Additional Dependencies` in **Configuration Properties**->**Linker**->**Input**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot14.png?raw=true "Additional dependencies")
 * Add folder paths (/I flag) at `Include Paths` in **Configuration Properties**->**Microsoft Macro Assembler**->**General**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot15.png?raw=true "Include paths")
 
 ## License
