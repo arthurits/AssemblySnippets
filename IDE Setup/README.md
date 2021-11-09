@@ -16,8 +16,8 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 ![Screenshot](/IDE%20Setup/Media/Screenshot00.png?raw=true "Associate asm extension")
 ### Optional: set directories
 For the following options, either right click on the project and select **Properties** from the floating menu or go to menu **Project**->**Properties**.
-<img src="/IDE%20Setup/Media/Screenshot04-A.png" alt="Right click to select project properties" width=51% >
-<img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-B.png" alt="Select menu project properties" width=48% >
+
+<img src="/IDE%20Setup/Media/Screenshot04-A.png" alt="Right click to select project properties" width=51% > <img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot04-B.png" alt="Select menu project properties" width=48% >
 * Set the output and the intermediate directories. Go to **Configuration Properties**->**General** and set the paths according to your own preferences.
 ![Screenshot](/IDE%20Setup/Media/Screenshot05.png?raw=true "Output directories")
 
@@ -38,17 +38,16 @@ For the following options, either right click on the project and select **Proper
 ### Macro assembler properties
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
 * Preserve Identifier Case (/Cp flag). Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General**.
-![Screenshot](/IDE%20Setup/Media/Screenshot10-Debug.png?raw=true "Preserve identifier case")
+![Screenshot](/IDE%20Setup/Media/Screenshot10.png?raw=true "Preserve identifier case")
 * Generate debug information (/Zi flag) **only for Debug** configuration.
-<img src="/IDE%20Setup/Media/Screenshot11-Debug.png" alt="Generate debug information" width=49% >
-<img src="/IDE%20Setup/Media/Screenshot11-Release.png" alt="Don't generate debug information in release mode" width=49% >
+<img src="/IDE%20Setup/Media/Screenshot11-Debug.png" alt="Generate debug information" width=49% > <img src="/IDE%20Setup/Media/Screenshot11-Release.png" alt="Don't generate debug information in release mode" width=49% >
 * Enable flags /Sa and /Sn (**only in Debug** configuration) and set the listing file path. Go to **Configuration Properties**->**Microsoft Macro Assembler**->**General** set the flags (make sure they are disabled for `Release`) and type the desired path.
-<img src="/IDE%20Setup/Media/Screenshot12-Debug.png" alt="Listing options in debug mode" width=49% >
-<img src="/IDE%20Setup/Media/Screenshot12-Release.png" alt="Listing options in release mode" width=49% >
+<img src="/IDE%20Setup/Media/Screenshot12-Debug.png" alt="Listing options in debug mode" width=49% > <img src="/IDE%20Setup/Media/Screenshot12-Release.png" alt="Listing options in release mode" width=49% >
 
 ### Optional: set external dependencies
 In case your project relies on external dependencies (such as `Irvine32.lib` or `masm32 SDK`), these three steps should be followed accordingly.
 * Add the SDK or library folder path (/LIBPATH flag) at `Additional Library Directories` in **Configuration Properties**->**Linker**->**General**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot13.png?raw=true "Additional library directories")
 * Add the library files (*.lib) at `Additional Dependencies` in **Configuration Properties**->**Linker**->**Input**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot14.png?raw=true "Additional dependencies")
