@@ -25,16 +25,28 @@ For the following options, either right click on the project and select **Proper
 
 ### Linker properties
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
+
 * Disable incremental link in **only in Release** configurarion. Go to **Configuration Properties**->**Linker**->**General**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot06.png?raw=true "Disable incremental link")
+
 * Enable optimizations **only in Release** configuration. Go to **Configuration Properties**->**Linker**->**Optimization**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot07.png?raw=true "Enable optimizations")
+
 * Define the programm's entry point for `All Configurations`. Go to **Configuration Properties**->**Linker**->**Advanced**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot08.png?raw=true "Define entry point")
 
 (while there, make sure the **Target Machine** is set to your desired architecture).
+
 * Set the subsystem to either `Console` or `Windows`. Go to **Configuration Properties**->**Linker**->**System**.
+
 ![Screenshot](/IDE%20Setup/Media/Screenshot09.png?raw=true "Linker subsystem")
+
+* Safe exception handlers (/SAFESEH flag): either allow or disable the flag both at **Configuration Properties**->**Linker**->**Advanced** and **Configuration Properties**->**Microsoft Macro Assembler**->**Advanced**
+
+<img src="/IDE%20Setup/Media/Screenshot16-A.png" alt="Linker safe exception handlers" width=51% > <img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot16-B.png" alt="MASM safe exception handlers" width=48% >
 
 ### Macro assembler properties
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
