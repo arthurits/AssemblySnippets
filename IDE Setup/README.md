@@ -46,7 +46,7 @@ For the following options, either right click on the project and select **Proper
 
 * Safe exception handlers (/SAFESEH flag): either allow or disable the flag both at **Configuration Properties**->**Linker**->**Advanced** and **Configuration Properties**->**Microsoft Macro Assembler**->**Advanced**
 
-<img src="/IDE%20Setup/Media/Screenshot16.png" alt="Linker safe exception handlers" width=51% > <img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot17.png" alt="MASM safe exception handlers" width=48% >
+<img src="/IDE%20Setup/Media/Screenshot16.png" alt="Linker safe exception handlers" width=49% > <img src="https://github.com/arthurits/AssemblySnippets/blob/master/IDE%20Setup/Media/Screenshot17.png" alt="MASM safe exception handlers" width=49% >
 
 ### Macro assembler properties
 For the following options, either right click on the project and select **Propertie**s from the floating menu or go to menu **Project**->**Properties**.
