@@ -4,7 +4,7 @@ Steps to configure Visual Studio for MASM programming.
 Copyright © 2021 by Arthurits Ltd. No commercial nor profit use allowed. This software is provided only for personal and not-for-profit use.
 Download latest release: [![GitHub release (latest by date)](https://img.shields.io/github/v/release/arthurits/AssemblySnippets)](https://github.com/arthurits/AssemblySnippets/releases)
 
-## Steps (work in progress)
+## General steps
 * Install Visual Studio.
 * Make sure to install "Desktop development with C++".
 ![Screenshot](/IDE%20Setup/Media/Screenshot01.png?raw=true "Install desktop develpment with C++")
@@ -12,7 +12,7 @@ Download latest release: [![GitHub release (latest by date)](https://img.shields
 ![Screenshot](/IDE%20Setup/Media/Screenshot02.png?raw=true "Empty project")
 * Once inside Visual Studio, right click on the project just created, select **Build Dependencies**->**Build Customizations...** from the floating menu (or go to menu **Project**->**Build Customizations...**), and check the `masm` option.
 ![Screenshot](/IDE%20Setup/Media/Screenshot03.png?raw=true "Target .masm")
-* Associate `asm` extension. Go to menu **Tools**->**Text Editor**->**File Extension**.
+* *Optional*: Associate `asm` extension. Go to menu **Tools**->**Text Editor**->**File Extension**.
 ![Screenshot](/IDE%20Setup/Media/Screenshot00.png?raw=true "Associate asm extension")
 ### Optional: set directories
 For the following options, either right click on the project and select **Properties** from the floating menu or go to menu **Project**->**Properties**.
