@@ -207,7 +207,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ; Stack alignment
     ;mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16 bits boundary
     ;sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
@@ -235,7 +235,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov hIn, rax
 
     ShowMsg:
-    ; Show the key-press message   
+    ; Show the key-press message
+    mov	 qword ptr [rsp + 4 * SIZEOF QWORD], NULL	; (reserved parameter, set to 0)
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait

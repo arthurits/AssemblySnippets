@@ -43,7 +43,7 @@ include FunctionProtos.asm
 
 main PROC
     ; Stack preliminaries
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; If needed, subtract 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input device
@@ -61,18 +61,20 @@ main PROC
     mov hStdout, rax
 
     ; Request the user to enter some text
-    mov rcx, hStdout
-    mov rdx, OFFSET msgInput
-    mov r8d, msgInputLength
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgInputLength
+    mov rdx, OFFSET msgInput
+    mov rcx, hStdout
     call WriteConsoleA
 
     ; Read the user-input text
-    mov rcx, hStdin
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
+    mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10) chars but not the null value at the end
+    mov r8d, BufferSize
     lea rbx, OFFSET buffer
     mov rdx, rbx      ; adds a null value at the end of the buffer
-    mov r8d, BufferSize
-    mov r9, OFFSET charsRead    ; includes the \n (13) and \r (10) chars but not the null value at the end
+    mov rcx, hStdin
     call ReadConsoleA
 
     ; Search any match with charTest
@@ -86,6 +88,7 @@ main PROC
     loop Loop1
 
     No:     ; No match found
+        mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
         mov rcx, hStdout
         mov rdx, OFFSET msgNoMatch
         mov r8d, msgNoMatchLength
@@ -94,6 +97,7 @@ main PROC
         jmp Exit
 
     Yes:    ; Match found
+        mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
         mov rcx, hStdout
         mov rdx, OFFSET msgMatch
         mov r8d, msgMatchLength
@@ -112,6 +116,7 @@ main PROC
         mov r8d, msgErrorOutputLength
 
     ErrorHandle:
+        mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
         mov rcx, hStdout
         mov r9, OFFSET charsWritten
         call WriteConsoleA
@@ -144,7 +149,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ; Stack alignment
     mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
@@ -172,7 +177,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov hIn, rax
 
     ShowMsg:
-    ; Show the key-press message   
+    ; Show the key-press message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait

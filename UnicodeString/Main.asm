@@ -55,12 +55,12 @@ main PROC
     mov rax, OFFSET msgString
     push rax
     call UnicodeString
-    add rsp, 2*8
 
-    mov rcx, hStdout
-    mov rdx, OFFSET msgUnicode
-    mov r8d, msgStringChars
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgStringChars
+    mov rdx, OFFSET msgUnicode
+    mov rcx, hStdout
     call WriteConsole
 
     ; Show the second message
@@ -68,12 +68,12 @@ main PROC
     mov rax, OFFSET msgStackByte
     push rax
     call UnicodeString
-    add rsp, 8*2
 
-    mov rcx, hStdout
-    mov rdx, msgStack
-    mov r8d, msgStackByteChars
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgStackByteChars
+    mov rdx, msgStack
+    mov rcx, hStdout
     call WriteConsole
 
     ; Show the third message
@@ -95,10 +95,11 @@ main PROC
 	mov rcx, CP_UTF8
 	call MultiByteToWideChar
 
-    mov rcx, hStdout
-    mov rdx, msgHeap
-    mov r8d, msgHeapByteChars
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgHeapByteChars
+    mov rdx, msgHeap
+    mov rcx, hStdout
     call WriteConsole
 
     ; Call wait-key
@@ -143,7 +144,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ; Stack alignment
     mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
@@ -171,7 +172,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov hIn, rax
 
     ShowMsg:
-    ; Show the key-press message   
+    ; Show the key-press message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait
@@ -207,7 +209,7 @@ UnicodeString PROC uses rsi rdi ansiArg: QWORD, ucArg: QWORD
         stosw
     cmp rax, 0	; we've reached the null end-character in ansiArg
     jne Loop1
-    ret
+    ret 2*SIZEOF QWORD
 UnicodeString ENDP
 
 END

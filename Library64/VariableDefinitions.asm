@@ -6,24 +6,6 @@ FALSE	equ	0
 NULL	equ	0
 INFINITE    equ -1  ;0FFFFFFFFh
 
-MB_OK               equ 0h
-MB_OKCANCEL         equ 1h
-MB_ABORTRETRYIGNORE	equ	2h
-MB_YESNOCANCEL	    equ	3h
-MB_YESNO	        equ	4h
-MB_RETRYCANCEL	    equ	5h
-MB_CANCELTRYCONTINUE    equ	6h
-MB_HELP	            equ	4000h
-
-MB_ICONEXCLAMATION	equ	30h
-MB_ICONWARNING  	equ	30h
-MB_ICONINFORMATION	equ	40h
-MB_ICONASTERISK 	equ	40h
-MB_ICONQUESTION 	equ	20h
-MB_ICONSTOP     	equ	10h
-MB_ICONERROR    	equ	10h
-MB_ICONHAND     	equ	10h
-
 EXIT_SUCCESS    equ 0
 INVALID_HANDLE_VALUE    equ -1
 
@@ -74,6 +56,55 @@ LPCTSTR     TYPEDEF QWORD
 LPTSTR      TYPEDEF QWORD
 LPBYTE      TYPEDEF QWORD
 
+
 ;
 ; ************************** Win64 structs ********************************
 ;
+
+COORD STRUCT
+  x  WORD      ?
+  y  WORD      ?
+COORD ENDS
+
+KEY_EVENT_RECORD STRUCT
+  bKeyDown          DWORD ?
+  wRepeatCount      WORD ?
+  wVirtualKeyCode   WORD ?
+  wVirtualScanCode  WORD ?
+  UNION
+    UnicodeChar     WORD ?
+    AsciiChar       BYTE ?
+  ENDS
+  dwControlKeyState DWORD ?
+KEY_EVENT_RECORD ENDS
+
+MOUSE_EVENT_RECORD STRUCT
+  dwMousePosition       COORD <>
+  dwButtonState         DWORD      ?
+  dwControlKeyState     DWORD      ?
+  dwEventFlags          DWORD      ?
+MOUSE_EVENT_RECORD ENDS
+
+WINDOW_BUFFER_SIZE_RECORD STRUCT
+  dwSize  COORD <>
+WINDOW_BUFFER_SIZE_RECORD ENDS
+
+MENU_EVENT_RECORD STRUCT
+  dwCommandId  DWORD      ?
+MENU_EVENT_RECORD ENDS
+
+FOCUS_EVENT_RECORD STRUCT
+  bSetFocus  DWORD      ?
+FOCUS_EVENT_RECORD ENDS
+
+INPUT_RECORD STRUCT
+  EventType             WORD ?
+  two_byte_alignment    WORD ?
+  UNION
+    KeyEvent                KEY_EVENT_RECORD            <>
+    MouseEvent              MOUSE_EVENT_RECORD          <>
+    WindowBufferSizeEvent   WINDOW_BUFFER_SIZE_RECORD   <>
+    MenuEvent               MENU_EVENT_RECORD           <>
+    FocusEvent              FOCUS_EVENT_RECORD          <>
+  ENDS
+INPUT_RECORD ENDS

@@ -32,7 +32,7 @@ include FunctionProtos.asm
 
 main PROC
     ; Stack preliminaries
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Get the input and output devices
@@ -49,10 +49,11 @@ main PROC
     mov hStdOut, rax
 
     ; Show the message
-    mov rcx, hStdOut
-    mov rdx, OFFSET msgString
-    mov r8d, msgStringChars
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgStringChars
+    mov rdx, OFFSET msgString
+    mov rcx, hStdOut
     call WriteConsoleA
 
     ; CDECL calling convention. Parameters are pushed in reverse order on the stack. Caller cleans the stack.
@@ -104,11 +105,11 @@ CDECLconv PROC hOut:QWORD, strMSG:QWORD, strLength:QWORD
     LOCAL chars: DWORD
 
     ; Stack alignment and shallow space
-    mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Show the  message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8, strLength
     mov rdx, strMSG
@@ -118,16 +119,17 @@ CDECLconv PROC hOut:QWORD, strMSG:QWORD, strLength:QWORD
     ret
 CDECLconv ENDP
 
+
 PASCALconv PROC
 
     LOCAL chars: DWORD
 
     ; Stack alignment and shallow space
-    mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Show the  message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8, [rbp + 10h]
     mov rdx, [rbp + 18h]
@@ -135,19 +137,21 @@ PASCALconv PROC
     call WriteConsoleA
     
     ; Restore rsp, pop rbp, and add 8*3 to rsp
-    ret 8*3
+    ret 3*SIZEOF QWORD
+
 PASCALconv ENDP
+
 
 STDCALLconv PROC hOut:QWORD, strMSG:QWORD, strLength:QWORD
 
     LOCAL chars: DWORD
 
     ; Stack alignment and shallow space
-    mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Show the  message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8, strLength
     mov rdx, strMSG
@@ -164,11 +168,11 @@ x64conv PROC
     LOCAL chars: DWORD
 
     ; Stack alignment and shallow space
-    mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Show the  message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     ;mov r8, strLength
     ;mov rdx, strMSG
@@ -194,7 +198,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ; Stack alignment and shallow space
     mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Check whether hStdout is set
@@ -221,7 +225,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov hIn, rax
 
     ShowMsg:
-    ; Show the key-press message   
+    ; Show the key-press message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait

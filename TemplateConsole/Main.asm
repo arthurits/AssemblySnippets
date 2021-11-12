@@ -20,7 +20,7 @@ include FunctionProtos.asm
 
 main PROC
     ; Stack preliminaries
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; If needed, subtract 8 bits to align the stack to a 16-bit boundary
 
     ; Get the input and output devices
@@ -37,10 +37,11 @@ main PROC
     mov hStdout, rax
 
     ; Show the message
-    mov rcx, hStdout
-    mov rdx, OFFSET msgString
-    mov r8d, msgStringChars
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     mov r9, OFFSET charsWritten
+    mov r8d, msgStringChars
+    mov rdx, OFFSET msgString
+    mov rcx, hStdout
     call WriteConsoleA
 
     Exit:
@@ -70,7 +71,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
 
     ; Stack alignment
     ;mov r15, rsp
-    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
 
     ; Check whether hStdout is set
@@ -97,7 +98,8 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     mov hIn, rax
 
     ShowMsg:
-    ; Show the key-press message   
+    ; Show the key-press message
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait
