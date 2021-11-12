@@ -19,8 +19,12 @@ Bug fixes:
 
 ; Public procedures:
 ; StructInit
-; StrlengthA
-; StrlengthW
+; StrCompareA
+; StrCompareW
+; StrCopyA
+; StrCopyW
+; StrLengthA
+; StrLengthW
 ; WaitKey
 
 ; Includes
@@ -39,15 +43,117 @@ include FunctionProtos.asm
 ;           RDX size of the struct
 ; Returns:  Nothing
 ;---------------------------------------------------------
-StructInit PROC
+StructInit PROC uses rax rcx rdx rdi
+
+    mov     rdi, rcx
+    mov     rcx, rdx
+    xor     rax, rax    ; initializaton value equal to 0
+    rep stosb
+
+    ret
 
 StructInit ENDP
+
+
+; -----------------------------------------------------
+; StrCompareA
+; Compares two 1-byte strings
+; Receives: RSI points to the source string
+;           RDI points to the target string
+; Returns:  Sets ZF if the strings are equal
+;		    Sets CF if RSI string < RDI string
+;------------------------------------------------------
+StrCompareA proc uses rax rdx rsi rdi
+L1: mov  al, [rsi]
+    mov  dl, [rdi]
+    cmp  al, 0    		; end of string1?
+    jne  L2      		; no
+    cmp  dl, 0    		; yes: end of string2?
+    jne  L2      		; no
+    jmp  L3      		; yes, exit with ZF = 1
+
+L2: inc  rsi      		; point to next
+    inc  rdi
+    cmp  al, dl   		; chars equal?
+    je   L1      		; yes: continue loop
+                 		; no: exit with flags set
+L3: ret
+StrCompareA endp
+
+; -----------------------------------------------------
+; StrCompareW
+; Compares two 2-byte strings
+; Receives: RSI points to the source string
+;           RDI points to the target string
+; Returns:  Sets ZF if the strings are equal
+;		    Sets CF if RSI string < RDI string
+;------------------------------------------------------
+StrCompareW proc uses rax rdx rsi rdi
+L1: mov  ax, [rsi]
+    mov  dx, [rdi]
+    cmp  ax, 0    		; end of string1?
+    jne  L2      		; no
+    cmp  dx, 0    		; yes: end of string2?
+    jne  L2      		; no
+    jmp  L3      		; yes, exit with ZF = 1
+
+L2: add  rsi, 2    		; point to next
+    add  rdi, 2
+    cmp  ax, dx   		; chars equal?
+    je   L1      		; yes: continue loop
+                 		; no: exit with flags set
+L3: ret
+StrCompareW endp
+
+;-------------------------------------------------
+; StrCopyA
+; Copies a 1-byte string
+; Receives: RCX points to the source string
+;           RDX points to the target string
+; Returns:  nothing, the string is copied into RDX
+;-------------------------------------------------
+StrCopyA proc uses rax rcx rsi rdi
+ 
+    ; mov rcx, rcx
+	call StrLengthA ; get length of source string
+
+    mov rsi, rcx
+    mov rdi, rdx
+	mov rcx, rax	; repeat count
+	inc rcx         ; add 1 for null byte
+	cld             ; direction = up
+	rep movsb      	; copy the string
+    
+	ret
+StrCopyA endp
+
+;-------------------------------------------------
+; StrCopyW
+; Copies a 2-byte string (Unicode)
+; Receives: RCX points to the source string
+;           RDX points to the target string
+; Returns:  nothing, the string is copied into RDX
+;-------------------------------------------------
+StrCopyW proc uses rax rcx rsi rdi
+ 
+    ; mov rcx, rcx
+	call StrLengthW ; get length of source string
+
+    mov rsi, rcx
+    mov rdi, rdx
+	mov rcx, rax	; repeat count
+	add rcx, 2      ; add 1 for null byte
+	cld             ; direction = up
+	rep movsw      	; copy the string
+    
+	ret
+StrCopyW endp
 
 ;---------------------------------------------------------
 ; StrLengthA
 ; Returns the length of a null-terminated string.
 ; Receives: RCX points to the string
-; Returns: RAX = string length
+; Returns: RAX = string length (not including the null character)
 ;---------------------------------------------------------
 StrLengthA PROC uses rdi
 	mov  rdi, rcx
@@ -66,7 +172,7 @@ StrLengthA ENDP
 ; StrLengthW
 ; Returns the length of a null-terminated string.
 ; Receives: RCX points to the string
-; Returns: RAX = string length
+; Returns: RAX = string length (not including the null character)
 ;---------------------------------------------------------
 StrLengthW PROC uses rdi
 	mov  rdi, rcx

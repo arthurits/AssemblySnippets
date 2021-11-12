@@ -69,7 +69,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     .code
 
     ; Stack alignment
-    mov r15, rsp
+    ;mov r15, rsp
     sub rsp, 8*4	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
 
