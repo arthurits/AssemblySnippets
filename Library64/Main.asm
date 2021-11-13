@@ -77,7 +77,7 @@ GetCharA PROC uses rbx rcx rdx r8 r9 r15
     xor rax, rax
     mov al, MOUSE_KEY.KeyEvent.AsciiChar
 
-    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    ; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
     add rsp, r15
 
     ret
@@ -120,7 +120,7 @@ GetCharW PROC uses rdx r8 r9 r15
     xor rax, rax
     mov ax, MOUSE_KEY.KeyEvent.UnicodeChar
     
-    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    ; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
     add rsp, r15
     ret
 
@@ -144,7 +144,7 @@ GetStdHandleIn PROC uses rcx
     mov rcx, -10    ; STD_INPUT_HANDLE
     call GetStdHandle
 
-    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    ; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
     add rsp, r15
 
     ret
@@ -169,7 +169,7 @@ GetStdHandleOut PROC uses rcx
     mov rcx, -11    ; STD_OUTPUT_HANDLE
     call GetStdHandle
 
-    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    ; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
     add rsp, r15
 
     ret
@@ -349,7 +349,7 @@ WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
     ; Stack alignment
     mov r15, rsp
     sub rsp, 8*5	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Subtract the needed bits to align to 16 bits boundary
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     mov r14, rcx    ; hStdIn
@@ -398,7 +398,7 @@ WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
 	jne ReadInput
 
     ExitWait:
-    add rsp, r15	; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    add rsp, r15	; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
 	
     ret
 
