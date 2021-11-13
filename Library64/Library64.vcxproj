@@ -27,6 +27,7 @@
       <FileType>Document</FileType>
     </None>
     <MASM Include="Main.asm" />
+    <None Include="Library64.inc" />
     <None Include="VariableDefinitions.asm">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </ExcludedFromBuild>

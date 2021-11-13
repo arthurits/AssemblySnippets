@@ -18,7 +18,11 @@ Bug fixes:
 !
 
 ; Public procedures:
-; StructInit
+; GetCharA          Retrieves the keyboard pressed by the user
+; GetCharW          Retrieves the keyboard pressed by the user
+; GetStdHandleIn    Retrieves the handle to the standard input device
+; GetStdHandleOut   Retrieves the handle to the standard output device
+; StructInit        Initializes a struct with 0
 ; StrCompareA
 ; StrCompareW
 ; StrCopyA
@@ -35,6 +39,142 @@ include FunctionProtos.asm
     
 
 .code
+
+;---------------------------------------------------------
+; GetCharA
+; Retrieves the keyboard pressed by the user.
+; Receives: RCX the hStdInput
+; Returns:  the ascii 1-byte code
+;---------------------------------------------------------
+GetCharA PROC uses rbx rcx rdx r8 r9 r15
+
+    LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
+    LOCAL lpEventsRead: QWORD
+    
+    ; Stack alignment
+    mov r15, rsp
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+
+    ; If no StdIn was passed, then get it
+    mov rbx, rcx    ; save for the loop
+    cmp rbx, NULL
+    jne ReadInput
+    call GetStdHandleIn
+    mov rbx, rax
+
+    ; Wait for any key pressed by the user    
+    ReadInput:
+        lea r9, lpEventsRead
+        mov r8, 1
+        lea rdx, MOUSE_KEY
+        mov rcx, rbx
+        call ReadConsoleInput
+	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+	jne ReadInput
+
+    xor rax, rax
+    mov al, MOUSE_KEY.KeyEvent.AsciiChar
+
+    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    add rsp, r15
+
+    ret
+
+GetCharA ENDP
+
+;---------------------------------------------------------
+; GetCharW
+; Retrieves the keyboard pressed by the user.
+; Receives: RCX the hStdInput
+; Returns:  The unicode 2-byte code
+;---------------------------------------------------------
+GetCharW PROC uses rdx r8 r9 r15
+
+    LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
+    LOCAL lpEventsRead: QWORD
+
+    ; Stack alignment
+    mov r15, rsp
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+
+    ; If no StdIn was passed, then get it
+    cmp rcx, NULL
+    jne ReadInput
+    call GetStdHandleIn
+    mov rcx, rax
+
+    ; Wait for any key pressed by the user    
+    ReadInput:
+        lea r9, lpEventsRead
+        mov r8, 2
+        lea rdx, MOUSE_KEY
+        mov rcx, rcx
+        call ReadConsoleInput
+	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
+	jne ReadInput
+
+    xor rax, rax
+    mov ax, MOUSE_KEY.KeyEvent.UnicodeChar
+    
+    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    add rsp, r15
+    ret
+
+GetCharW ENDP
+
+;---------------------------------------------------------
+; GetStdHandleIn
+; Retrieves the handle to the standard input device.
+; Receives: nothing
+; Returns:  RAX handle
+;---------------------------------------------------------
+GetStdHandleIn PROC uses rcx
+
+    ; Stack alignment
+    mov r15, rsp
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+
+    ; Get the input device
+    mov rcx, -10    ; STD_INPUT_HANDLE
+    call GetStdHandle
+
+    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    add rsp, r15
+
+    ret
+
+GetStdHandleIn ENDP
+
+;---------------------------------------------------------
+; GetStdHandleOut
+; Retrieves the handle to the standard output device.
+; Receives: nothing
+; Returns:  RAX handle
+;---------------------------------------------------------
+GetStdHandleOut PROC uses rcx
+
+    ; Stack alignment
+    mov r15, rsp
+    sub rsp, 8*4	; Shallow space for Win32 API x64 calls
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+
+    ; Get the input device
+    mov rcx, -11    ; STD_OUTPUT_HANDLE
+    call GetStdHandle
+
+    ; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
+    add rsp, r15
+
+    ret
+
+GetStdHandleOut ENDP
 
 ;---------------------------------------------------------
 ; StructInit
@@ -190,10 +330,11 @@ StrLengthW ENDP
 ;---------------------------------------------------------
 ; WaitKey
 ; Waits for the user to press any key
-; Receives: hIn (input handle) and hOut (output handle); they can be null
+; Receives: RCX hIn (input handle) or NULL
+;           RDX hOut (output handle) or NULL
 ; Returns: nothing
 ;---------------------------------------------------------
-WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
+WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
 
     LOCAL chars: DWORD
     LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
@@ -206,13 +347,16 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     .code
 
     ; Stack alignment
-    ;mov r15, rsp
+    mov r15, rsp
     sub rsp, 8*5	; Shallow space for Win32 API x64 calls
     and rsp, -10h	; Subtract the needed bits to align to 16 bits boundary
-    ;sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
+
+    mov r14, rcx    ; hStdIn
+    mov r15, rdx    ; hStdOut
 
     ; Check whether hStdout is set
-    cmp hOut, 0
+    cmp r15, NULL
     jne CheckStdin
     
     ; Get the output device
@@ -220,11 +364,11 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov hOut, rax
+    mov r15, rax
 
     ; Check whether hStdin is set
     CheckStdin:
-    cmp hIn, 0
+    cmp r14, NULL
     jne ShowMsg
 
     ; Get the input device
@@ -232,7 +376,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     call GetStdHandle
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
-    mov hIn, rax
+    mov r14, rax
 
     ShowMsg:
     ; Show the key-press message
@@ -240,7 +384,7 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     lea r9, chars
     mov r8d, msgWaitChars
     mov rdx, OFFSET msgWait
-    mov rcx, hOut
+    mov rcx, r15
     call WriteConsoleA
 
     ; Wait for any key pressed by the user    
@@ -248,16 +392,15 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
         lea r9, lpEventsRead
         mov r8, 1
         lea rdx, MOUSE_KEY
-        mov rcx, hIn
+        mov rcx, r14
         call ReadConsoleInput
 	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
     ExitWait:
-    ;add rsp, r15	; Restore the stack pointer before the alignment took place
+    add rsp, r15	; Restore the stack pointer before the alignment took place. This is needed because the "uses" directive.
 	
-    ret ;mov rsp, rbp ; remove locals from stack
-        ;pop rbp
+    ret
 
 WaitKey ENDP
 

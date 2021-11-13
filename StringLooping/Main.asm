@@ -11,6 +11,9 @@ endif
 include VariableDefinitions.asm
 include FunctionProtos.asm
 
+; Definitions for Library64.lib
+include ..\Library64\Library64.inc
+
 .data
     hStdin QWORD 0
     hStdout QWORD 0
@@ -25,13 +28,16 @@ include FunctionProtos.asm
     BufferSize equ $-buffer
 
     ; Text strings
+    msgChar     BYTE    "Please enter the character to look for (press just one key): ", 0
+    msgCharLength equ $-msgChar
+
     msgInput    BYTE    "Please enter some text (up to 1022 chars): ", 13, 10, 0
     msgInputLength equ $-msgInput
 
-    msgMatch BYTE "Match found with character 'i'", 0
+    msgMatch BYTE 13, 10, "Match found with character ' '", 0
     msgMatchLength equ $-msgMatch
     
-    msgNoMatch BYTE "No match found with character 'i'", 0
+    msgNoMatch BYTE 13, 10, "No match found with character ' '", 0
     msgNoMatchLength equ $-msgNoMatch
     
     msgErrorInput BYTE "Error retrieving the input handle device", 0
@@ -77,6 +83,26 @@ main PROC
     mov rcx, hStdin
     call ReadConsoleA
 
+    ; Request the user to enter a char to look for
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
+    mov r9, OFFSET charsWritten
+    mov r8d, msgCharLength
+    mov rdx, OFFSET msgChar
+    mov rcx, hStdout
+    call WriteConsoleA
+
+    ; Get the char and print it
+    mov rcx, hStdin
+    call GetCharA
+    mov charTest, al
+
+    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
+    mov r9, OFFSET charsWritten
+    mov r8d, 1
+    mov rdx, OFFSET charTest
+    mov rcx, hStdout
+    call WriteConsoleA
+
     ; Search any match with charTest
     mov ecx, charsRead
     ;inc rcx     ; uncomment this line in case we want to include in the loop the null character at the end of the string
@@ -91,6 +117,7 @@ main PROC
         mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
         mov rcx, hStdout
         mov rdx, OFFSET msgNoMatch
+        mov BYTE PTR [rdx + msgNoMatchLength - 3], al
         mov r8d, msgNoMatchLength
         mov r9, OFFSET charsWritten
         call WriteConsoleA
@@ -100,6 +127,7 @@ main PROC
         mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
         mov rcx, hStdout
         mov rdx, OFFSET msgMatch
+        mov BYTE PTR [rdx + msgMatchLength - 3], al
         mov r8d, msgMatchLength
         mov r9, OFFSET charsWritten
         call WriteConsoleA
@@ -123,10 +151,10 @@ main PROC
 
     ; Exit the application
     Exit:
-        push hStdout
-        push hStdin
+        mov rdx, hStdout
+        mov rcx, hStdin
         call WaitKey
-        add rsp, 2*8
+        ;add rsp, 2*8
 
         call FreeConsole
 
@@ -135,7 +163,7 @@ main PROC
 
 main ENDP
 
-WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
+WaitKey2 PROC uses r15 hIn:QWORD, hOut:QWORD
 
     LOCAL chars: DWORD
     LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
@@ -201,6 +229,6 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     ret ;mov rsp, rbp ; remove locals from stack
         ;pop rbp
 
-WaitKey ENDP
+WaitKey2 ENDP
 
 END

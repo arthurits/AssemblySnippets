@@ -7,8 +7,8 @@ endif
 include VariableDefinitions.asm
 include FunctionProtos.asm
 
-; Definitions from Library64.lib
-externdef WaitKey:PROC
+; Definitions for Library64.lib
+include ..\Library64\Library64.inc
 
 .data
     hStdin QWORD 0

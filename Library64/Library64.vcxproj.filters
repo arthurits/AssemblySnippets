@@ -32,6 +32,9 @@
     <None Include="FunctionProtos.asm">
       <Filter>Archivos de origen</Filter>
     </None>
+    <None Include="Library64.inc">
+      <Filter>Archivos de encabezado</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="small.ico">

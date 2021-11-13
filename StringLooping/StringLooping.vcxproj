@@ -44,6 +44,11 @@
   <ItemGroup>
     <Image Include="small.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Library64\Library64.vcxproj">
+      <Project>{5cb08ad4-523c-4fac-9701-3ca072567d66}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
