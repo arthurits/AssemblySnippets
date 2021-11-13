@@ -15,8 +15,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "AlphabetPrinting", "Alphabe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CallingConventions", "CallingConventions\CallingConventions.vcxproj", "{E311A76E-1793-4989-BF36-6F6F614E533D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library", "Library\Library.vcxproj", "{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Library64", "Library64\Library64.vcxproj", "{5CB08AD4-523C-4FAC-9701-3CA072567D66}"
 EndProject
 Global
@@ -73,14 +71,6 @@ Global
 		{E311A76E-1793-4989-BF36-6F6F614E533D}.Release|x64.Build.0 = Release|x64
 		{E311A76E-1793-4989-BF36-6F6F614E533D}.Release|x86.ActiveCfg = Release|Win32
 		{E311A76E-1793-4989-BF36-6F6F614E533D}.Release|x86.Build.0 = Release|Win32
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Debug|x64.ActiveCfg = Debug|x64
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Debug|x64.Build.0 = Debug|x64
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Debug|x86.ActiveCfg = Debug|Win32
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Debug|x86.Build.0 = Debug|Win32
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Release|x64.ActiveCfg = Release|x64
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Release|x64.Build.0 = Release|x64
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Release|x86.ActiveCfg = Release|Win32
-		{16B99DF4-8ACA-4C7B-833A-C70D9AE057A0}.Release|x86.Build.0 = Release|Win32
 		{5CB08AD4-523C-4FAC-9701-3CA072567D66}.Debug|x64.ActiveCfg = Debug|x64
 		{5CB08AD4-523C-4FAC-9701-3CA072567D66}.Debug|x64.Build.0 = Debug|x64
 		{5CB08AD4-523C-4FAC-9701-3CA072567D66}.Debug|x86.ActiveCfg = Debug|Win32
