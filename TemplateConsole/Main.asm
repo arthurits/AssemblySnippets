@@ -48,7 +48,6 @@ main PROC
     push hStdout
     push hStdin
     call WaitKey
-    add rsp, 2*8
 
     call FreeConsole
 
@@ -70,9 +69,10 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
     .code
 
     ; Stack alignment
-    ;mov r15, rsp
+    mov r15, rsp
     sub rsp, 8*5	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Subtract 8 bits if needed to align to 16 bits boundary
+    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
+    sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
     ; Check whether hStdout is set
     cmp hOut, 0
@@ -116,9 +116,9 @@ WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
         cmp MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
-    ExitWait:	
-    ret ;mov rsp, rbp   ; remove locals from stack
-        ;pop rbp        ; get return address
+    ExitWait:
+    add rsp, r15	; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
+    ret SIZEOF hIn + SIZEOF hOut
 
 WaitKey ENDP
 

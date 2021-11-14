@@ -4,8 +4,8 @@ __UNICODE__ equ 1
 endif
 
 ; Includes
-include VariableDefinitions.asm
-include FunctionProtos.asm
+include ..\TemplateConsole\VariableDefinitions.asm
+include ..\TemplateConsole\FunctionProtos.asm
 
 ; Definitions for Library64.lib
 include ..\Library64\Library64.inc
@@ -78,10 +78,9 @@ main PROC
     jbe Loop1
 
     Exit:
-    push hStdout
-    push hStdin
+    mov rdx, hStdout
+    mov rcx, hStdin
     call WaitKey
-    add rsp, 2*8
 
     call FreeConsole
 
@@ -89,7 +88,5 @@ main PROC
     call ExitProcess
 
 main ENDP
-
-
 
 END

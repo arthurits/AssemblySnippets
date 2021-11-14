@@ -4,8 +4,11 @@ __UNICODE__ equ 1
 endif
 
 ; Includes
-include VariableDefinitions.asm
-include FunctionProtos.asm
+include ..\TemplateConsole\VariableDefinitions.asm
+include ..\TemplateConsole\FunctionProtos.asm
+
+; Definitions for Library64.lib
+include ..\Library64\Library64.inc
 
 .data
     hStdIn QWORD 0
@@ -36,14 +39,12 @@ main PROC
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
 
     ; Get the input and output devices
-    mov rcx, STD_INPUT_HANDLE
-    call GetStdHandle
+    call GetStdHandleIn
     cmp rax, INVALID_HANDLE_VALUE
     je Exit
     mov hStdIn, rax
 
-    mov rcx, STD_OUTPUT_HANDLE
-    call GetStdHandle
+    call GetStdHandleOut
     cmp rax, INVALID_HANDLE_VALUE
     je Exit
     mov hStdOut, rax
@@ -88,8 +89,8 @@ main PROC
     call x64conv
 
     Exit:
-    push hStdOut
-    push hStdIn
+    mov rdx, hStdOut
+    mov rcx, hStdIn
     call WaitKey
 
     call FreeConsole
@@ -182,74 +183,5 @@ x64conv PROC
     ret
 
 x64conv ENDP
-
-
-WaitKey PROC uses r15 hIn:QWORD, hOut:QWORD
-
-    LOCAL chars: DWORD
-    LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
-    LOCAL lpEventsRead: QWORD
-
-    .data
-        msgWait     BYTE    13, 10, "(Press any key to exit...)", 0
-        msgWaitChars equ $-msgWait
-
-    .code
-
-    ; Stack alignment and shallow space
-    mov r15, rsp
-    sub rsp, 8*5	; Shallow space for Win32 API x64 calls
-    and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
-
-    ; Check whether hStdout is set
-    cmp hOut, 0
-    jne CheckStdin
-    
-    ; Get the output device
-    mov rcx, STD_OUTPUT_HANDLE
-    call GetStdHandle
-    cmp rax, INVALID_HANDLE_VALUE
-    je ExitWait
-    mov hOut, rax
-
-    ; Check whether hStdin is set
-    CheckStdin:
-    cmp hIn, 0
-    jne ShowMsg
-
-    ; Get the input device
-    mov rcx, STD_INPUT_HANDLE
-    call GetStdHandle
-    cmp rax, INVALID_HANDLE_VALUE
-    je ExitWait
-    mov hIn, rax
-
-    ShowMsg:
-    ; Show the key-press message
-    mov QWORD PTR [rsp + 4*SIZEOF QWORD], NULL
-    lea r9, chars
-    mov r8d, msgWaitChars
-    mov rdx, OFFSET msgWait
-    mov rcx, hOut
-    call WriteConsoleA
-
-    ; Wait for any key pressed by the user    
-    ReadInput:
-        lea r9, lpEventsRead
-        mov r8, 1
-        lea rdx, MOUSE_KEY
-        mov rcx, hIn  
-        call ReadConsoleInput
-        cmp MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
-	jne ReadInput
-
-    ExitWait:
-	
-    ret TYPE hIn + TYPE hOut
-    ;mov rsp, rbp ; remove locals from stack
-    ;pop rbp
-    ;add rsp, TYPE hIn + TYPE hOut
-
-WaitKey ENDP
 
 END

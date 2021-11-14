@@ -25,12 +25,6 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="FunctionProtos.asm">
-      <Filter>Archivos de origen</Filter>
-    </None>
-    <None Include="VariableDefinitions.asm">
-      <Filter>Archivos de origen</Filter>
-    </None>
     <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>

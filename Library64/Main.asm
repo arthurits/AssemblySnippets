@@ -23,13 +23,13 @@ Bug fixes:
 ; GetStdHandleIn    Retrieves the handle to the standard input device
 ; GetStdHandleOut   Retrieves the handle to the standard output device
 ; StructInit        Initializes a struct with 0
-; StrCompareA
-; StrCompareW
-; StrCopyA
-; StrCopyW
-; StrLengthA
-; StrLengthW
-; WaitKey
+; StrCompareA       Compares two 1-byte strings
+; StrCompareW       Compares two 2-byte strings
+; StrCopyA          Copies a 1-byte string (ANSI)
+; StrCopyW          Copies a 2-byte string (UNICODE)
+; StrLengthA        Computes the length of a 1-byte null-terminated string
+; StrLengthW        Computes the length of a 2-byte null-terminated string
+; WaitKey           Waits for the user to press any key
 
 ; Includes
 include VariableDefinitions.asm
@@ -70,7 +70,7 @@ GetCharA PROC uses rbx rcx rdx r8 r9 r15
         mov r8, 1
         lea rdx, MOUSE_KEY
         mov rcx, rbx
-        call ReadConsoleInput
+        call ReadConsoleInputA
 	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
@@ -90,7 +90,7 @@ GetCharA ENDP
 ; Receives: RCX the hStdInput
 ; Returns:  The unicode 2-byte code
 ;---------------------------------------------------------
-GetCharW PROC uses rdx r8 r9 r15
+GetCharW PROC uses rbx rdx r8 r9 r15
 
     LOCAL MOUSE_KEY: INPUT_RECORD    ; sizeof=0x14, align=0x4 http://masm32.com/board/index.php?topic=7676.0
     LOCAL lpEventsRead: QWORD
@@ -101,19 +101,22 @@ GetCharW PROC uses rdx r8 r9 r15
     and rsp, -10h	; Subtract the needed bits to align to 16-bit boundary
     sub r15, rsp	; r15 stores the shallow space needed for Win32 API x64 calls
 
+    mov r14, rcx    ; hStdIn
+
     ; If no StdIn was passed, then get it
-    cmp rcx, NULL
+    mov rbx, rcx    ; save for the loop
+    cmp rbx, NULL
     jne ReadInput
     call GetStdHandleIn
-    mov rcx, rax
+    mov rbx, rax
 
     ; Wait for any key pressed by the user    
     ReadInput:
         lea r9, lpEventsRead
-        mov r8, 2
+        mov r8, 1
         lea rdx, MOUSE_KEY
-        mov rcx, rcx
-        call ReadConsoleInput
+        mov rcx, rbx
+        call ReadConsoleInputW
 	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
 	jne ReadInput
 
@@ -291,7 +294,7 @@ StrCopyW endp
 
 ;---------------------------------------------------------
 ; StrLengthA
-; Returns the length of a null-terminated string.
+; Computes the length of a 1-byte null-terminated string.
 ; Receives: RCX points to the string
 ; Returns: RAX = string length (not including the null character)
 ;---------------------------------------------------------
@@ -310,7 +313,7 @@ StrLengthA ENDP
 
 ;---------------------------------------------------------
 ; StrLengthW
-; Returns the length of a null-terminated string.
+; Computes the length of a 2-byte null-terminated string.
 ; Receives: RCX points to the string
 ; Returns: RAX = string length (not including the null character)
 ;---------------------------------------------------------
@@ -360,8 +363,7 @@ WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
     jne CheckStdin
     
     ; Get the output device
-    mov rcx, STD_OUTPUT_HANDLE
-    call GetStdHandle
+    call GetStdHandleOut
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
     mov r15, rax
@@ -372,8 +374,7 @@ WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
     jne ShowMsg
 
     ; Get the input device
-    mov rcx, STD_INPUT_HANDLE
-    call GetStdHandle
+    call GetStdHandleIn
     cmp rax, INVALID_HANDLE_VALUE
     je ExitWait
     mov r14, rax
@@ -387,15 +388,9 @@ WaitKey PROC uses rax rcx rdx r8 r9 r14 r15
     mov rcx, r15
     call WriteConsoleA
 
-    ; Wait for any key pressed by the user    
-    ReadInput:
-        lea r9, lpEventsRead
-        mov r8, 1
-        lea rdx, MOUSE_KEY
-        mov rcx, r14
-        call ReadConsoleInput
-	    cmp	MOUSE_KEY.EventType, 1  ; KEY_EVENT 0x0001
-	jne ReadInput
+    ; Wait for any key pressed by the user
+    mov rcx, r14
+    call GetCharW
 
     ExitWait:
     add rsp, r15	; Restore the stack pointer before the alignment took place. This is needed because of the "uses" directive.
