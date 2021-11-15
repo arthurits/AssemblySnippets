@@ -64,6 +64,34 @@ LPBYTE      TYPEDEF QWORD
 
 
 ;
+; ************************** String implementation ********************************
+; https://www.quora.com/How-does-C++-implement-a-string
+
+STD_STRING_A STRUCT
+    UNION
+        Stack   BYTE    16 DUP(0)
+        Heap    QWORD   0
+    ENDS
+    Len         QWORD   0       ; Both return the length
+    Capacity    QWORD   0       ; Provides the number of characters that can be held in the currently allocated storage
+STD_STRING_A ENDS
+
+STD_STRING_W STRUCT
+    UNION
+        Stack   WORD    8 DUP(0)
+        Heap    QWORD   0
+    ENDS
+    Len         QWORD   0       ; Both return the length
+    Capacity    QWORD   0       ; Provides the number of characters that can be held in the currently allocated storage
+STD_STRING_W ENDS
+
+IFDEF __UNICODE__
+    STRING equ STD_STRING_W
+ELSE
+    STRING equ STD_STRING_A
+ENDIF
+
+;
 ; ************************** Win64 structs ********************************
 ;
 
@@ -114,3 +142,4 @@ INPUT_RECORD STRUCT
     FocusEvent              FOCUS_EVENT_RECORD          <>
   ENDS
 INPUT_RECORD ENDS
+
