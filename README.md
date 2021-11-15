@@ -2,6 +2,7 @@
 A collection of some code snippets in MASM x64. To properly set up Visual Studio 2022 for MASM programming, please either see [IDE Setup](https://github.com/arthurits/AssemblySnippets/tree/master/IDE%20Setup) or use one of the templates (`TemplateConsole` or `TemplateWindows`) below.
 
 Copyright © 2021 by Arthurits Ltd. No commercial nor profit use allowed. This software is provided only for personal and not-for-profit use.
+
 Download latest release: [![GitHub release (latest by date)](https://img.shields.io/github/v/release/arthurits/AssemblySnippets)](https://github.com/arthurits/AssemblySnippets/releases)
 
 ## Code snippets list
